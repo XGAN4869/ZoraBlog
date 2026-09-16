@@ -1,5 +1,5 @@
 {
-  "name": "ganblog",
+  "name": "fronted",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -27,5 +27,9 @@
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
 }

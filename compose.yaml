@@ -1,0 +1,22 @@
+services:
+  frontend:
+    build:
+      context: ./fronted
+      dockerfile: Dockerfile
+    image: frontend:local
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+
+  # 后端代码就绪后，使用 `docker compose --profile full up --build` 启动。
+  # 普通的 `docker compose up --build` 会跳过该服务，所以现在前端仍可单独运行。
+  backend:
+    profiles:
+      - full
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: backend:local
+    expose:
+      - "8080"
+    restart: unless-stopped
