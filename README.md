@@ -7,7 +7,7 @@
 前端：
 
 ```powershell
-cd fronted/GanBlog
+cd frontend/GanBlog
 npm install
 npm run dev
 ```

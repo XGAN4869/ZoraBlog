@@ -1,7 +1,7 @@
 services:
   frontend:
     build:
-      context: ./fronted
+      context: ./frontend
       dockerfile: Dockerfile
     image: frontend:local
     ports:
