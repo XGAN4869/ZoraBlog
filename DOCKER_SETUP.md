@@ -56,7 +56,7 @@ Docker 的思路是：**别让对方装环境了，你把"环境 + 你的代码"
 
 ## 3. 你的前端 Dockerfile 干了什么
 
-打开 `fronted/GanBlog/Dockerfile`，就两段：
+打开 `frontend/GanBlog/Dockerfile`，就两段：
 
 ```dockerfile
 FROM node:24-alpine AS build          # 第一段：准备一个装了 Node 24 的环境
@@ -193,7 +193,7 @@ docker compose up -d --build
 
 本次任务不是"从零创建 Dockerfile"，而是：
 
-1. **核对** —— 仓库里已经有完整的 Docker 配置（`fronted/GanBlog/Dockerfile`、`backend/Dockerfile`、`compose.yaml` 等），逐一检查后**未做任何修改**。
+1. **核对** —— 仓库里已经有完整的 Docker 配置（`frontend/GanBlog/Dockerfile`、`backend/Dockerfile`、`compose.yaml` 等），逐一检查后**未做任何修改**。
 2. **排障** —— `docker compose build` 失败，根因是 Docker Hub 被墙，**不是 Dockerfile 的问题**。
 3. **修复网络** —— 配置国内镜像加速，改的是用户级 `~/.docker/daemon.json`，仓库文件一行未动。
 4. **验证** —— 前端镜像构建成功，容器启动并通过健康检查，四项 HTTP 行为逐条验证通过。
@@ -206,9 +206,9 @@ docker compose up -d --build
 
 | 文件 | 说明 |
 |---|---|
-| `fronted/GanBlog/Dockerfile` | 前端双阶段构建 |
-| `fronted/GanBlog/nginx.conf` | Nginx 站点配置 |
-| `fronted/GanBlog/.dockerignore` | 前端构建上下文忽略 |
+| `frontend/GanBlog/Dockerfile` | 前端双阶段构建 |
+| `frontend/GanBlog/nginx.conf` | Nginx 站点配置 |
+| `frontend/GanBlog/.dockerignore` | 前端构建上下文忽略 |
 | `backend/Dockerfile` | Go 后端占位构建文件 |
 | `backend/.dockerignore` | 后端构建上下文忽略 |
 | `compose.yaml` | 编排文件 |
