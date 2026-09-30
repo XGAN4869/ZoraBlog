@@ -56,7 +56,7 @@ func (s *userStore) CreateUser(username, hashedPassword, nickname string) (*User
 
 	return user, nil
 }
-
+//这种写法不利于单元测试
 func main() {
 	router := gin.Default()
 	//注册路由

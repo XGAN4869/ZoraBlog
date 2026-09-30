@@ -144,12 +144,12 @@ curl http://localhost:8080/api/health
 
 ## 7. 完成检查
 
-- [ ] 旧 `main.go` 已保存为不参与编译的学习快照。
-- [ ] `NewRouter()` 测试先失败后通过。
-- [ ] `cmd/server/main.go` 只负责启动。
-- [ ] `/api/health` 行为保持兼容。
-- [ ] `go test ./...` 不再只显示 `[no test files]`。
-- [ ] `go run ./cmd/server` 可以启动。
+- [x] 旧 `main.go` 已保存为不参与编译的学习快照。
+- [x] `NewRouter()` 测试先失败后通过。
+- [x] `cmd/server/main.go` 只负责启动。
+- [x] `/api/health` 行为保持兼容。
+- [x] `go test ./...` 不再只显示 `[no test files]`。
+- [x] `go run ./cmd/server` 可以启动。
 
 ---
 

@@ -1,64 +1,10 @@
 # main.go
+
 ## 后端三层：**Handler → Service → Repository**
+
 - **Handler**：接收 HTTP 请求、路由分发、参数校验、组装返回体
 - **Service**：业务逻辑，流程编排、业务校验、多个 Repo 组合调用
 - **Repository**：数据访问层，只负责读写数据，**不写业务**
-
-## 一句话 Gin 启动流程
-- router.go: 创建 gin 引擎，然后注册一个 GET 路由，路径是 /api/health，并挂上一个匿名处理函数。当有人访问这个地址时，执行该函数，用 c.JSON 返回 JSON 格式，状态码 200，响应体内容是 gin.H{...}。
-
-## map
-
-map 的零值是 `nil`，可以读，不能直接写，写入前需要用 `make` 初始化。
-
-- 读：`v, ok := m[k]`，返回值和是否存在
-- 写：`m[k] = v` 写入前必 make，只要 make 一次即可
-- 删：`delete(m, k)`
-
-## type xxx struct
-
-- struct 字段声明时不能直接赋初始值
-- 大写开头的名称可被包外访问，小写开头只能在当前包使用
-- `json:"id"` 设置 JSON 字段名，`json:"-"` 表示序列化时忽略
-
-## 指针与方法
-
-- User{} → 值 | p := &User{} → 指针（地址），& 读作"取地址" | *User → "指向 User 的指针"这个类型，永远是同一个 User | *p 一般和 & 搭配专门用于解引用
-  ```go
-  type User struct {
-  Name string
-  Age int
-  }
-
-  // 创建一个 User 值， u1 是 u 的拷贝，改 u1 不影响 u
-  u := User{Name: "张三", Age: 18}
-  u1 := u //值一样引用不一样
-  // 创建一个 User 指针， u1 和 u 都是同一个地址
-  u := &User{}
-  u1 = u //真等
-  // 创建一个 \*User（指针），& 表示"取地址"
-  p := &User{Name: "李四", Age: 20}
-
-  ```
-
-- `(s *userStore)` 是方法接收者，s 就作用类似 `this`，因为 *userStore 是 "指向 User 的指针"这个类型
-- `byID` 和 `byName` 保存的是同一个 `User` 指针
-- Go 不支持在函数内再声明具名函数
-- nil = 空指针
-
-## 构造函数
-
-`newUserStore()` 是惯用的构造函数写法，负责返回新实例并初始化 map。
-
-```go
-func newUserStore() *userStore {
-	return &userStore{
-		nextID: 1,
-		byID:   make(map[uint]*User),
-		byName: make(map[string]*User),
-	}
-}
-````
 
 ## 并发安全
 
@@ -66,7 +12,6 @@ func newUserStore() *userStore {
 - `Lock()` 加写锁，`defer Unlock()` 确保函数返回前解锁
 - 只读操作可使用 `RLock()` 和 `RUnlock()
 - defer = finally`
-
 
 # server 包 ：HTTP 层的装配中心。Handler 层
 
@@ -78,28 +23,136 @@ server.go (监听)
         → Service (业务逻辑)
           → Repository (读写数据)
 ```
+
 ## router.go
+
 ### 定位
+
 - router.go —— 路由分发
 - 它创建了一个 HTTP 服务器引擎，在里面登记了"什么 URL 由什么函数处理"，然后把这个引擎交出去给 main.go 启动。
 
-### gin 框架
-- 提供路由、中间件（中间逻辑）、请求处理
-- Gin（中间件）洋葱模型= 夹在「请求到达」和「你的处理函数执行」之间的一段代码，它有权决定放行、拦截、或者顺便干点活。
-如果 net/http 是原生 fetch，Gin 就是 Express / Koa。
-- 一句话：前端 Router 决定“显示什么页面”，后端 Router 决定“谁来处理请求”。
+### 一句话 Gin 框架 启动流程
 
+- 提供路由、中间件（中间逻辑）、请求处理
+- Gin（中间件）洋葱模型
+- router.go: 创建 gin 引擎，然后注册一个 GET 路由，路径是 /api/health，并挂上一个匿名处理函数。当有人访问这个地址时，执行该函数，用 c.JSON 返回 JSON 格式，状态码 200，响应体内容是 gin.H{...}。
+
+### router.GET/POST 内部逻辑
+
+- 在 Gin 的底层路由树（radix tree）上，为 GET 方法 + 指定路径 注册一个节点；
+- 把 handler 这个函数作为回调存起来（注册，不是调用）；
+- 将来匹配到请求时，由 Gin 的 ServeHTTP 去查找并调用这个 handler。
+
+### router 放 main.go 和 放 router.go 的区别
+
+```
+【写法一】main 一把梭
+
+  main()
+   ├── gin.Default()              创建引擎
+   ├── router.GET(...)            注册路由  ← 挂载
+   └── router.Run(":8080")        启动监听
+                                        │
+                                        ▼
+                                  请求来了 → 执行 handler
+
+
+【写法二】分层
+
+  main()
+   ├── server.NewRouter()  ──┐
+   │                         │  内部：
+   │                         │   ├── gin.Default()
+   │                         │   ├── router.GET(...)   ← 挂载（挪到了这里）
+   │                         │   └── return router
+   │                         │
+   ├── if err := router.Run(":8080"); err != nil {
+   │       log.Fatal(err)    处理启动错误
+   └── }
+                                        │
+                                        ▼
+                                  请求来了 → 执行 handler
+```
 
 ## server.go
 
 ### 定位
+
 - server.go —— HTTP 层的第一站（网络入口）
 
 ## middleware —— 逻辑拦截的第一站
 
+# config.go
+## 环境变量
+所以注入环境变量的责任交给：
+- **Docker Compose**（`environment:` 段）
+- **PowerShell**（`$env:XXX = ...`）
+- **部署平台**（K8s、云平台的环境变量配置）
+`Load()` 只管"环境变量已经在进程里了，我来读"，不管"怎么进来的"。
+
+```
+启动流程：
+
+  外部环境变量
+       │
+       ▼
+   Load()  ← 唯一一次读环境变量 + 校验 + 填默认值
+       │
+       ▼
+   Config{Environment, Port, DatabaseDSN}   ← 已经定好的结果
+       │
+       ├──▶ db 模块接收 cfg.DatabaseDSN
+       ├──▶ server 模块接收 cfg.Port
+       └──▶ 其他模块接收 cfg
+```
+关键：**`Load()` 是唯一接触 `os.Getenv` 的地方。**
 
 # 其他基本概念
+
 - 引擎：它本身不负责具体业务，而是负责把输入转成输出、驱动整套流程运转。
+
+## go 目录构成相关
+
+### package main/目录名
+- GO 是包 + 标识符 的机制。
+- package main + func main() = 可执行文件
+- **编译负责生成机器码（目标代码），链接负责拼装 + 定址**
+
+| 阶段          | 做什么                                | 产物                       |
+| ----------- | ---------------------------------- | ------------------------ |
+| 编译（compile） | 源码 → 汇编 → **机器码**，生成符号表，外部符号留占位    | `.a`（含机器码 + 符号表 + 重定位信息） |
+| 链接（link）    | 合并所有 `.a`，**给符号分配最终地址**，改写占位符为真实地址 | 可执行文件                    |
+
+
+```
+【源码层】
+main.go:   import "xg/internal/server"
+           router := server.NewRouter()
+                        │
+                        │ ① 包名限定符
+                        ▼
+router.go: package server
+           func NewRouter() *gin.Engine { ... }
+                        │
+                        │ ② 首字母大写 = 导出
+                        ▼
+【编译层】
+ 编译server 包时，编译器会记录它导出的符号（symbol）表，比如 router.go 中的 server 表里有 NewRouter
+- 之后 main 包在编译时，遇到 server.NewRouter(包名+标识符)，编译器就去 server 包的符号表中查 NewRouter，找到后就 return 回来一个 &NewRouter 地址
+                        │
+                        ▼
+【链接层】
+  main.o 里对 NewRouter 的引用  ──链接──▶  server.o 里 NewRouter 的地址
+                        │
+                        ▼
+【运行层】
+  直接跳转到 NewRouter 函数地址执行（普通函数调用，零额外开销）
+```
+### 指令
+- go build 的产物本来就是可执行文件
+- go get / go mod tidy = npm i
+依赖会下载到 GOPATH\pkg\mod 里, 所有项目共享的一份缓存，不同于 node_modules
+- go run .
 
 #
 
