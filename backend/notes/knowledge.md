@@ -6,6 +6,21 @@
 - **Service**：业务逻辑，流程编排、业务校验、多个 Repo 组合调用
 - **Repository**：数据访问层，只负责读写数据，**不写业务**
 
+```
+你的三层              细分层
+─────────────────────────────────────────
+                    ┌─ 框架层（Engine + 路由） 中间件是 router engine 中的 recovery logger
+                    ├─ 中间件层（Logger/Auth/CORS）
+Handler（接入层）   ├─ Handler 函数
+                    ├─ 绑定层（ShouldBindJSON）
+                    └─ 校验层（validator）
+─────────────────────────────────────────
+Service（业务层）   └─ 业务逻辑层
+─────────────────────────────────────────
+Repository（数据层）├─ 数据访问层（DAO）
+                    └─ 存储层（MySQL/Redis）
+```
+
 ## 并发安全
 
 - `sync.RWMutex` 用于保护多个 goroutine 共享的 map
