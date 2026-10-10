@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useTheme } from "@/lib/theme";
-import { MotionConfig, motion } from "motion/react";
+import { MotionConfig, motion, useReducedMotion } from "motion/react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -24,6 +24,7 @@ import {
   EyeOff,
   FileCode2,
   Layers3,
+  List,
   Loader2,
   Menu,
   Moon,
@@ -55,10 +56,21 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Toaster } from "@/components/ui/sonner";
 import { ShapeGrid } from "@/components/ShapeGrid";
+import { BlogNavigation } from "@/components/BlogNavigation";
+import { ArticleDirectory } from "@/components/ArticleDirectory";
+import { ArticleOutline } from "@/components/ArticleOutline";
+import { useBorderGlow } from "@/hooks/use-border-glow";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/base/sidebar";
+import { articleModules, categoryArticles } from "@/data/navigation";
 import {
   articles,
   categories,
@@ -121,27 +133,10 @@ function Header({ onSearch }: { onSearch: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
   const light = resolvedTheme === "light";
-  const active =
-    location.pathname === "/"
-      ? `/${location.hash}`
-      : location.pathname.startsWith("/articles")
-        ? "/#articles"
-        : "";
   return (
-    <header className="site-header shell">
+    <header className="site-header">
       <Brand />
-      <nav className="desktop-nav" aria-label="主导航">
-        {navigation.map((item) => (
-          <Link
-            key={item.to}
-            to={item.to}
-            className={active === item.to ? "active" : ""}
-            aria-current={active === item.to ? "page" : undefined}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      <BlogNavigation key={location.pathname + location.hash} />
       <div className="header-actions">
         <Button
           variant="ghost"
@@ -178,6 +173,27 @@ function Header({ onSearch }: { onSearch: () => void }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            {articleModules.map((module) => (
+              <DropdownMenuSub key={module.id}>
+                <DropdownMenuSubTrigger>{module.label}</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  {module.categories.map((category) => (
+                    <div key={category}>
+                      <DropdownMenuLabel>{category}</DropdownMenuLabel>
+                      {categoryArticles(category).map((article) => (
+                        <DropdownMenuItem
+                          key={article.slug}
+                          onSelect={() => navigate(`/articles/${article.slug}`)}
+                        >
+                          {article.title}
+                        </DropdownMenuItem>
+                      ))}
+                    </div>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            ))}
+            <DropdownMenuSeparator />
             {navigation.map((item) => (
               <DropdownMenuItem
                 key={item.to}
@@ -302,6 +318,7 @@ function Cover({ article }: { article: Article }) {
 }
 
 function ArticleCard({ article, index }: { article: Article; index: number }) {
+  const glow = useBorderGlow();
   return (
     <motion.article
       initial={{ opacity: 0, y: 16 }}
@@ -309,7 +326,12 @@ function ArticleCard({ article, index }: { article: Article; index: number }) {
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.4, delay: index * 0.04 }}
     >
-      <Link className="article-card" to={`/articles/${article.slug}`}>
+      <Link
+        className="article-card border-glow-card"
+        to={`/articles/${article.slug}`}
+        {...glow}
+      >
+        <span className="border-glow-edge" aria-hidden="true" />
         <Cover article={article} />
         <div className="article-card-body">
           <div className="article-meta">
@@ -758,68 +780,98 @@ function CodeBlock({ code }: { code: string }) {
 
 function ArticlePage() {
   const { slug } = useParams();
+  const [outlineOpen, setOutlineOpen] = useState(false);
+  const reducedMotion = useReducedMotion();
   const article = articles.find((item) => item.slug === slug);
   if (!article) return <NotFound />;
   const related = articles.filter((item) => item.slug !== slug).slice(0, 3);
   return (
     <main className="article-page shell">
-      <Link to="/#articles" className="back-link">
-        <ArrowLeft />
-        全部文章
-      </Link>
-      <div className="reading-layout">
-        <article className="reading-content">
-          <div className="article-meta">
-            <span className="category-label">{article.category}</span>
-            <span>
-              {article.date} · {article.readTime} 分钟阅读
-            </span>
+      <SidebarProvider className="article-reading-shell">
+        <ArticleDirectory slug={article.slug} />
+        <div className="reading-toolbar">
+          <Link to="/#articles" className="back-link">
+            <ArrowLeft />
+            全部文章
+          </Link>
+          <div className="reading-tools">
+            <SidebarTrigger
+              className="mobile-directory-trigger"
+              aria-label="打开文章目录"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mobile-outline-trigger"
+              aria-label="打开文章大纲"
+              onClick={() => setOutlineOpen(true)}
+            >
+              <List />
+            </Button>
           </div>
-          <h1>{article.title}</h1>
-          <p className="article-lead">{article.summary}</p>
-          <div className="author-line">
-            <span className="mini-avatar">Z.</span>
-            <span>Zora</span>
-            <span>前端开发工程师</span>
-            <span className="sample-label">示例文章</span>
-          </div>
-          <Cover article={article} />
-          <div className="article-prose">
-            {article.sections.map((section, index) => (
-              <section key={section.heading} id={`section-${index}`}>
-                <h2>{section.heading}</h2>
-                {section.paragraphs.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
-                {section.code && <CodeBlock code={section.code} />}
-              </section>
-            ))}
-          </div>
-          <div className="article-end">
-            <span>感谢阅读，下次见。</span>
-            <span className="brand-mark">
-              z<span>.</span>
-            </span>
-          </div>
-        </article>
-        <aside className="table-of-contents">
-          <span className="section-kicker">IN THIS ARTICLE</span>
-          {article.sections.map((section, index) => (
-            <a key={section.heading} href={`#section-${index}`}>
-              <span>0{index + 1}</span>
-              {section.heading}
-            </a>
-          ))}
-          <div className="toc-note">
-            <BookOpen />
-            <p>
-              写下来，
-              <br />
-              让思考走得更远。
-            </p>
-          </div>
-        </aside>
-      </div>
+        </div>
+        <motion.div
+          key={article.slug}
+          className="reading-layout"
+          initial={{
+            opacity: reducedMotion ? 1 : 0,
+            y: reducedMotion ? 0 : 16,
+          }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: reducedMotion ? 0 : 0.28,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          <article className="reading-content">
+            <div className="article-meta">
+              <span className="category-label">{article.category}</span>
+              <span>
+                {article.date} · {article.readTime} 分钟阅读
+              </span>
+            </div>
+            <h1>{article.title}</h1>
+            <p className="article-lead">{article.summary}</p>
+            <div className="author-line">
+              <span className="mini-avatar">Z.</span>
+              <span>Zora</span>
+              <span>前端开发工程师</span>
+              <span className="sample-label">示例文章</span>
+            </div>
+            <Cover article={article} />
+            <div className="article-prose">
+              {article.sections.map((section, index) => (
+                <section key={section.heading} id={`section-${index}`}>
+                  <h2>{section.heading}</h2>
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                  {section.code && <CodeBlock code={section.code} />}
+                </section>
+              ))}
+            </div>
+            <div className="article-end">
+              <span>感谢阅读，下次见。</span>
+              <span className="brand-mark">
+                z<span>.</span>
+              </span>
+            </div>
+          </article>
+          <ArticleOutline key={article.slug} article={article} />
+        </motion.div>
+        <Dialog open={outlineOpen} onOpenChange={setOutlineOpen}>
+          <DialogContent className="outline-dialog">
+            <DialogHeader>
+              <DialogTitle>本页大纲</DialogTitle>
+              <DialogDescription>{article.title}</DialogDescription>
+            </DialogHeader>
+            <ArticleOutline
+              article={article}
+              onNavigate={() => setOutlineOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      </SidebarProvider>
       <div className="related-articles">
         <div className="section-heading">
           <h2>
@@ -887,20 +939,27 @@ function Site() {
           : "Hi Zora · 前端开发与创造";
     const frame = requestAnimationFrame(() => {
       if (location.hash && location.hash !== "#top")
-        document
-          .getElementById(location.hash.slice(1))
-          ?.scrollIntoView({
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-              .matches
-              ? "instant"
-              : "smooth",
-          });
+        document.getElementById(location.hash.slice(1))?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches
+            ? "instant"
+            : "smooth",
+        });
       else window.scrollTo({ top: 0, behavior: "instant" });
     });
     return () => cancelAnimationFrame(frame);
   }, [location.pathname, location.hash]);
   return (
-    <div id="top">
+    <div
+      id="top"
+      className={
+        articles.some(
+          (article) => location.pathname === `/articles/${article.slug}`,
+        )
+          ? "article-layout"
+          : undefined
+      }
+    >
       <a href="#main-content" className="skip-link">
         跳转到主要内容
       </a>

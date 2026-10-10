@@ -5,7 +5,35 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: "Inter Variable", "Microsoft YaHei", sans-serif;
+  --font-heading: "Inter Variable", "Microsoft YaHei", sans-serif;
+  --font-body: "Inter Variable", "Microsoft YaHei", sans-serif;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --text-heading: 32px;
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-caption: 12px;
+  --line-heading: 40px;
+  --line-body: 24px;
+  --line-caption: 20px;
+  --control-height: 40px;
+  --control-height-lg: 48px;
+  --control-radius: 8px;
+  --nav-height: 80px;
+  --nav-offset: 0px;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--line-body);
   --background: #f7f8fa;
   --foreground: #17191f;
   --card: #ffffff;
@@ -24,7 +52,7 @@
   --border: #dce0e7;
   --input: #cfd5df;
   --ring: #5285f9;
-  --radius: 0.25rem;
+  --radius: 0.5rem;
   --mono: "JetBrains Mono Variable", Consolas, monospace;
   --header-bg: rgba(250, 251, 253, 0.9);
   --hero-tint: #e7eefc;
@@ -37,6 +65,14 @@
 }
 
 .dark {
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.922 0 0);
+  --sidebar-primary-foreground: oklch(0.205 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
   --background: #0a0b0d;
   --foreground: #f0f1f3;
   --card: #101216;
@@ -61,6 +97,14 @@
 }
 
 @theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -79,9 +123,9 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 8px;
   --radius-xl: 8px;
 }
 
@@ -124,8 +168,37 @@ h3,
 p {
   margin: 0;
 }
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+}
+[data-slot="button"] {
+  height: var(--control-height);
+  border-radius: var(--control-radius);
+  padding-inline: var(--space-2);
+  gap: var(--space-1);
+  font-size: var(--text-small);
+  line-height: var(--line-caption);
+}
+[data-slot="button"][data-size="lg"] {
+  height: var(--control-height-lg);
+}
+[data-slot="button"][data-size="icon"] {
+  width: var(--control-height);
+  padding: 0;
+}
+[data-slot="input"] {
+  height: var(--control-height-lg);
+  border-radius: var(--control-radius);
+  padding-inline: var(--space-2);
+  font-size: var(--text-small);
+  line-height: var(--line-body);
+}
 html {
-  scroll-padding-top: 116px;
+  scroll-padding-top: calc(
+    var(--nav-height) + var(--nav-offset) + var(--space-2)
+  );
 }
 svg {
   flex-shrink: 0;

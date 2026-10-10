@@ -1,0 +1,113 @@
+.article-card.border-glow-card {
+  --glow-strength: 0;
+  --glow-angle: 45deg;
+  --glow-padding: 12px;
+  --glow-color: #3975f5;
+  --glow-accent: #5cbcc8;
+  --glow-rgb: 57, 117, 245;
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.dark .article-card.border-glow-card {
+  --glow-color: #9abaff;
+  --glow-accent: #9ae9ed;
+  --glow-rgb: 95, 153, 255;
+}
+
+.article-card.border-glow-card:hover {
+  border-color: var(--border);
+}
+
+.border-glow-card > .article-cover {
+  border-radius: 7px 7px 0 0;
+}
+
+.border-glow-card::before,
+.border-glow-card > .border-glow-edge {
+  position: absolute;
+  pointer-events: none;
+  opacity: var(--glow-strength);
+  transition: opacity 180ms ease-out;
+}
+
+.border-glow-card::before {
+  content: "";
+  inset: -1px;
+  z-index: 2;
+  padding: 2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--glow-angle) at 50% 50%,
+    var(--glow-color) 0deg,
+    var(--glow-accent) 25deg,
+    transparent 65deg,
+    transparent 295deg,
+    var(--glow-accent) 335deg,
+    var(--glow-color) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.border-glow-card > .border-glow-edge {
+  inset: calc(var(--glow-padding) * -1);
+  border-radius: inherit;
+  z-index: 1;
+  mask-image: conic-gradient(
+    from var(--glow-angle) at 50% 50%,
+    #000 0deg,
+    transparent 45deg,
+    transparent 315deg,
+    #000 360deg
+  );
+}
+
+.border-glow-edge::before {
+  content: "";
+  position: absolute;
+  inset: var(--glow-padding);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 0 1px var(--glow-color),
+    inset 0 0 6px rgba(var(--glow-rgb), 0.3),
+    inset 0 0 16px rgba(var(--glow-rgb), 0.14),
+    0 0 6px rgba(var(--glow-rgb), 0.65),
+    0 0 12px rgba(var(--glow-rgb), 0.4);
+}
+
+.border-glow-card:not(:hover):not(:focus-visible)::before,
+.border-glow-card:not(:hover):not(:focus-visible) > .border-glow-edge {
+  opacity: 0;
+  transition-duration: 300ms;
+}
+
+.border-glow-card:focus-visible::before,
+.border-glow-card:focus-visible > .border-glow-edge {
+  opacity: 0.65;
+}
+
+@supports not (mask-composite: exclude) {
+  .border-glow-card::before {
+    background: none;
+    -webkit-mask: none;
+    mask: none;
+    box-shadow: inset 0 0 0 1px var(--glow-color);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .border-glow-card::before {
+    background: linear-gradient(135deg, var(--glow-color), var(--glow-accent));
+  }
+  .border-glow-card > .border-glow-edge {
+    mask-image: none;
+  }
+}
