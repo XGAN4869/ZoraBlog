@@ -1,24 +1,14 @@
 import { test, expect } from "@playwright/test";
 
-test("home renders a live grid and filters articles", async ({ page }) => {
+test("home preserves the greeting and opens the filterable blog", async ({ page }) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Hi, I'm Zora." }),
   ).toBeVisible();
-  const canvas = page.locator("canvas").first();
-  await expect(canvas).toBeVisible();
-  await expect
-    .poll(() =>
-      canvas
-        .evaluate((element: HTMLCanvasElement) => {
-          const pixels = element
-            .getContext("2d")!
-            .getImageData(0, 0, element.width, element.height).data;
-          return pixels.some((value, index) => index % 4 === 3 && value > 0);
-        })
-        .catch(() => false),
-    )
-    .toBe(true);
+  await expect(page.locator(".home-page canvas")).toHaveCount(1);
+  await expect(page.locator("#hello canvas")).toBeVisible();
+  await page.getByRole("link", { name: "探索文章", exact: true }).click();
+  await expect(page).toHaveURL("/blog");
   await page.getByRole("tab", { name: "TypeScript", exact: true }).click();
   await expect(page.locator(".article-card")).toHaveCount(1);
   await page.locator(".article-card").click();
@@ -75,10 +65,10 @@ test("preview login validates and never persists credentials", async ({
   ).not.toContain("demo-password");
 });
 
-test("grid animates, responds to pointer, and respects reduced motion", async ({
+test("login grid animates, responds to pointer, and respects reduced motion", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/login");
   await page.waitForLoadState("networkidle");
   const canvas = page.locator("canvas").first();
   const snapshot = () =>

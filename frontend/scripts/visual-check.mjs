@@ -25,6 +25,7 @@ try {
     );
     for (const [routeName, route] of [
       ["home", "/"],
+      ["blog", "/blog"],
       ["login", "/login"],
       ["article", "/articles/react-component-boundaries"],
     ]) {
@@ -47,12 +48,18 @@ try {
             heading.x + heading.width <= viewport.width,
           `${name}: heading framing`,
         );
-        const nextSection = await page.locator("#articles").boundingBox();
+        const screens = await page.locator(".home-page > section").count();
         assert(
-          nextSection.y < viewport.height,
-          `${name}: next section must be hinted in first viewport`,
+          screens === 2 && Math.abs(hero.height - viewport.height) < 1,
+          `${name}: home must have exactly two full-height screens`,
         );
         await page.screenshot({ path: `test-results/visual/${name}-hero.png` });
+        await page.locator(".home-page").evaluate((element) => element.scrollTo({ top: innerHeight, behavior: "instant" }));
+        await page.waitForTimeout(1000);
+        const room = await page.locator("#room").boundingBox();
+        assert(Math.abs(room.y) < 1 && Math.abs(room.height - viewport.height) < 1, `${name}: room framing`);
+        await page.screenshot({ path: `test-results/visual/${name}-room.png` });
+        await page.locator(".home-page").evaluate((element) => element.scrollTo({ top: 0, behavior: "instant" }));
       }
       // Reveal viewport-triggered article animations before full-page capture.
       for (
@@ -71,7 +78,7 @@ try {
       });
     }
     await page.close();
-    console.log(`${name}: home, login and article verified`);
+    console.log(`${name}: home, room, blog, login and article verified`);
   }
   assert.deepEqual(failures, [], "Browser console errors");
 } finally {
