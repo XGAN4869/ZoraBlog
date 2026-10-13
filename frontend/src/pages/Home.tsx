@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
+import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
 import { ShapeGrid } from "@/components/ShapeGrid";
 import { ZoraRoom } from "@/components/ZoraRoom";
 import "./Home.css";
@@ -51,12 +52,9 @@ export function Home() {
             写代码，也写下思考<span className="text-cursor">_</span>
           </h2>
           <div className="hero-buttons">
-            <Button asChild size="lg">
-              <Link to="/blog">
-                探索文章
-                <ArrowRight />
-              </Link>
-            </Button>
+            <InteractiveHoverButton asChild className="w-[136px] md:w-40">
+              <Link to="/blog">探索文章</Link>
+            </InteractiveHoverButton>
             <Button asChild variant="outline" size="lg">
               <Link to="/#about">
                 认识一下
