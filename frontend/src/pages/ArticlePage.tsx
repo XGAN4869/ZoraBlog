@@ -23,7 +23,6 @@ function CodeBlock({ code }: { code: string }) {
   return (
     <div className="code-block">
       <div>
-        <span>CODE</span>
         <IconAction
           label="复制代码"
           onClick={async () => {
@@ -102,7 +101,6 @@ export function ArticlePage() {
             <div className="author-line">
               <span className="mini-avatar">Z.</span>
               <span>Zora</span>
-              <span>前端开发工程师</span>
               <span className="sample-label">示例文章</span>
             </div>
             <Cover article={article} />
@@ -116,12 +114,6 @@ export function ArticlePage() {
                   {section.code && <CodeBlock code={section.code} />}
                 </section>
               ))}
-            </div>
-            <div className="article-end">
-              <span>感谢阅读，下次见。</span>
-              <span className="brand-mark">
-                z<span>.</span>
-              </span>
             </div>
           </article>
           <ArticleOutline key={article.slug} article={article} />

@@ -2,15 +2,12 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowUpRight, Layers3, Terminal } from "lucide-react";
 import { useBorderGlow } from "@/hooks/use-border-glow";
-import { articles, type Article } from "@/data/articles";
+import type { Article } from "@/data/articles";
 import reactLogo from "@/assets/react.svg";
 
 export function Cover({ article }: { article: Article }) {
   return (
     <div className={`article-cover cover-${article.cover}`} aria-hidden="true">
-      <span className="cover-index">
-        {String(articles.indexOf(article) + 1).padStart(2, "0")} / FIELD NOTES
-      </span>
       {article.cover === "react" ? (
         <img src={reactLogo} alt="" />
       ) : article.cover === "typescript" ? (
@@ -24,10 +21,6 @@ export function Cover({ article }: { article: Article }) {
       ) : (
         <Terminal className="cover-symbol" />
       )}
-      <span className="cover-caption">
-        {article.category.toUpperCase()}
-        <ArrowUpRight />
-      </span>
     </div>
   );
 }

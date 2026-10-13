@@ -75,10 +75,11 @@ function Header({ onSearch }: { onSearch: () => void }) {
           className="search-trigger"
           onClick={onSearch}
           aria-label="搜索文章"
+          aria-keyshortcuts="Control+K Meta+K"
+          title="搜索文章（Ctrl+K）"
         >
           <Search />
           <span>搜索</span>
-          <kbd>Ctrl K</kbd>
         </Button>
         <span className="action-divider" />
         <IconAction
@@ -167,8 +168,8 @@ function SearchDialog({
       >
         <DialogHeader>
           <DialogTitle>搜索文章</DialogTitle>
-          <DialogDescription id="search-description">
-            从前端实践到日常思考。
+          <DialogDescription id="search-description" className="sr-only">
+            搜索博客文章
           </DialogDescription>
         </DialogHeader>
         <div className="search-field">
@@ -218,7 +219,6 @@ function SearchDialog({
             <div className="empty-search">
               <Search />
               <p>还没有找到相关文章</p>
-              <small>试试 React、Vue 或工程实践</small>
             </div>
           )}
         </div>
@@ -231,9 +231,9 @@ function Footer() {
   return (
     <footer className="site-footer shell">
       <Brand />
-      <span>© {new Date().getFullYear()} Zora. 用代码创造，用文字记录。</span>
+      <span>© {new Date().getFullYear()} Zora</span>
       <a href="#top" aria-label="回到顶部">
-        BACK TO TOP
+        回到顶部
         <ArrowUpRight />
       </a>
     </footer>

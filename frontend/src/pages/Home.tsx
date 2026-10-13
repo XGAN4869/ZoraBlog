@@ -37,22 +37,12 @@ export function Home() {
       <section className="hero home-screen" id="hello" aria-label="Hi Zora">
         <ShapeGrid light={resolvedTheme === "light"} />
         <div className="grid-shade" />
-        <div className="hero-margin left">
-          <span>PERSONAL JOURNAL / 2026</span>
-        </div>
-        <div className="hero-margin right">
-          <span>BUILD. LEARN. SHARE.</span>
-        </div>
         <motion.div
           className="hero-content"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75 }}
         >
-          <div className="hero-eyebrow">
-            <span className="status-dot" />A FRONTEND DEVELOPER'S JOURNAL
-            <span className="eyebrow-end">/ 01</span>
-          </div>
           <h1>
             Hi, I'm <span>Zora</span>
             <span className="title-period">.</span>
@@ -60,11 +50,6 @@ export function Home() {
           <h2>
             写代码，也写下思考<span className="text-cursor">_</span>
           </h2>
-          <p>
-            记录前端世界里的探索与实践。
-            <br />
-            把知识沉淀为文字，把想法变成作品。
-          </p>
           <div className="hero-buttons">
             <Button asChild size="lg">
               <Link to="/blog">
@@ -79,24 +64,12 @@ export function Home() {
               </Link>
             </Button>
           </div>
-          <div className="hero-stack">
-            <span>WORKING WITH</span>
-            <span>React</span>
-            <span>Vue</span>
-            <span>TypeScript</span>
-            <span className="stack-plus">+</span>
-          </div>
         </motion.div>
         <div className="hero-bottom shell">
-          <span>
-            <span className="tiny-cross">+</span> ALWAYS CURIOUS. ALWAYS
-            BUILDING.
-          </span>
           <Link to="/#room" className="scroll-link">
-            ENTER MY SPACE
+            进入房间
             <ArrowDown />
           </Link>
-          <span className="hero-coordinate">A PERSONAL SPACE ON THE WEB</span>
         </div>
       </section>
       <ZoraRoom onDragChange={onDragChange} />

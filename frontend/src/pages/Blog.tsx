@@ -16,14 +16,10 @@ export function Blog() {
       <section className="articles-section shell section" id="articles">
         <div className="section-heading">
           <div>
-            <div className="section-kicker">
-              <span>01</span> / THE JOURNAL
-            </div>
             <h2>
               最近写下的<span className="blue-period">.</span>
             </h2>
           </div>
-          <p>一些经验，一些想法，一点点进步。</p>
         </div>
         <Tabs value={category} onValueChange={setCategory}>
           <div className="article-filter">
@@ -35,7 +31,7 @@ export function Blog() {
               ))}
             </TabsList>
             <span className="result-count">
-              {String(visible.length).padStart(2, "0")} 篇文章
+              {visible.length} 篇文章
             </span>
           </div>
           <TabsContent value={category}>

@@ -9,12 +9,11 @@ type ObjectProps = {
   label: string;
   index: number;
   title: string;
-  description: string;
   to?: string;
   onDragChange: (dragging: boolean) => void;
 };
 
-function RoomObject({ id, label, index, title, description, to, onDragChange }: ObjectProps) {
+function RoomObject({ id, label, index, title, to, onDragChange }: ObjectProps) {
   const boundsRef = useRef<HTMLDivElement>(null);
   const draggedRef = useRef(false);
   const controls = useDragControls();
@@ -62,7 +61,6 @@ function RoomObject({ id, label, index, title, description, to, onDragChange }: 
   const copy = (
     <span className="studio-module-copy">
       <span className="studio-module-title" role="heading" aria-level={3}>{title}</span>
-      <span className="studio-module-description">{description}</span>
     </span>
   );
 
@@ -110,23 +108,21 @@ export function ZoraRoom({ onDragChange }: { onDragChange: (dragging: boolean) =
         <div className="studio-heading">
           <div>
             <h2 id="room-title">Zora's Room<span>.</span></h2>
-            <p>文字、灵感，还有一点点日常。</p>
           </div>
         </div>
         <div className="studio-stage" aria-label="房间里的三个模块">
           <div className="studio-board">
-          <RoomObject id="blog" label="进入博客" title="Blog" description="记录技术，也收藏灵感。" index={0} to="/blog" onDragChange={onDragChange} />
+          <RoomObject id="blog" label="进入博客" title="Blog" index={0} to="/blog" onDragChange={onDragChange} />
           <Dialog>
-            <RoomObject id="projects" label="查看项目" title="Projects" description="慢慢把想法做出来。" index={1} onDragChange={onDragChange} />
+            <RoomObject id="projects" label="查看项目" title="Projects" index={1} onDragChange={onDragChange} />
             <DialogContent className="studio-dialog">
-              <DialogHeader><DialogTitle>想法的落点</DialogTitle><DialogDescription>已有项目的记录与开发实践。</DialogDescription></DialogHeader>
+              <DialogHeader><DialogTitle>想法的落点</DialogTitle><DialogDescription className="sr-only">项目相关开发实践文章</DialogDescription></DialogHeader>
               <Link to="/articles/vue-composable-state" className="studio-project-link"><span><strong>Vite Ku Zora</strong><small>组件与组合式函数的个人工具箱 · Vue / VitePress</small></span></Link>
               <Link to="/articles/frontend-project-structure" className="studio-project-link"><span><strong>Hi Zora Blog</strong><small>关于技术、表达与持续成长的个人空间 · React / TypeScript</small></span></Link>
-              <p className="studio-dialog-note">点击阅读相关实践。独立项目展示页暂未提供。</p>
             </DialogContent>
           </Dialog>
           <Dialog>
-            <RoomObject id="about" label="认识 Zora" title="About" description="Zora · Front-end Developer" index={2} onDragChange={onDragChange} />
+            <RoomObject id="about" label="认识 Zora" title="About" index={2} onDragChange={onDragChange} />
             <DialogContent className="studio-dialog">
               <DialogHeader><DialogTitle>Hi, 我是 Zora。</DialogTitle><DialogDescription>一名前端开发工程师，喜欢清晰的代码，也喜欢有温度的设计。</DialogDescription></DialogHeader>
               <p>这里是我的知识记录，也是持续学习、分享和创造的地方。</p>
@@ -135,7 +131,6 @@ export function ZoraRoom({ onDragChange }: { onDragChange: (dragging: boolean) =
           </Dialog>
           </div>
         </div>
-        <div className="studio-instructions"><span className="desktop-room-hint">轻轻拖动，松手就会回到原处。</span><span className="mobile-room-hint">点击，进来坐坐。</span></div>
       </div>
       <div className="studio-footer shell"><Link to="/#hello" className="scroll-link">回到 Hi, Zora <ArrowUp size={14} /></Link></div>
     </section>

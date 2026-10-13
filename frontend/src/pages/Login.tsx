@@ -71,17 +71,12 @@ export function Login({ mode = "login" }: { mode?: "login" | "register" }) {
       <div className="grid-shade" />
       <div className="login-layout shell">
         <div className="login-intro">
-          <div className="section-kicker">A SPACE FOR CURIOUS MINDS</div>
           <h1>每一次记录，<br />都是新的<span>开始。</span></h1>
-          <p>让思考有迹可循。<br />在这里，继续你的探索。</p>
-          <div className="login-signature"><span className="brand-mark">z<span>.</span></span><span>Hi Zora Journal<br /><small>BUILD. LEARN. SHARE.</small></span></div>
         </div>
         <motion.div className="login-form-area" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
           <Link to="/" className="back-link"><ArrowLeft />返回首页</Link>
           <div className="login-heading">
-            <span className="section-kicker">{registering ? "MAKE YOURSELF AT HOME /" : "WELCOME BACK /"}</span>
             <h2>{registering ? "欢迎加入" : "欢迎回来"}<span className="blue-period">.</span></h2>
-            <p>{registering ? "创建一个账号，和我一起探索与交流。" : "登录你的账号，继续探索与交流。"}</p>
           </div>
           <form onSubmit={submit} noValidate aria-busy={busy}>
             {errors.server && <p className="auth-form-error" role="alert">{errors.server}</p>}
@@ -117,7 +112,6 @@ export function Login({ mode = "login" }: { mode?: "login" | "register" }) {
           </form>
         </motion.div>
       </div>
-      <div className="login-bottom shell"><span>YOUR IDEAS DESERVE A PLACE.</span><span>HI ZORA / JOURNAL</span></div>
     </main>
   );
 }
