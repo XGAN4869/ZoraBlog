@@ -8,13 +8,12 @@ type ObjectProps = {
   id: "blog" | "projects" | "about";
   label: string;
   index: number;
-  tilt: number;
   children: ReactNode;
   to?: string;
   onDragChange: (dragging: boolean) => void;
 };
 
-function RoomObject({ id, label, index, tilt, children, to, onDragChange }: ObjectProps) {
+function RoomObject({ id, label, index, children, to, onDragChange }: ObjectProps) {
   const boundsRef = useRef<HTMLDivElement>(null);
   const draggedRef = useRef(false);
   const controls = useDragControls();
@@ -82,12 +81,11 @@ function RoomObject({ id, label, index, tilt, children, to, onDragChange }: Obje
         onDragEnd={returnHome}
         onPointerCancel={() => { controls.cancel(); returnHome(); }}>
         <motion.div className="studio-visual"
-          style={{ transformPerspective: 1200 }}
-          initial={reduced ? false : { opacity: 0, y: 55, scale: 0.94, rotateZ: tilt * 2 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1, rotateZ: reduced ? 0 : tilt, rotateY: reduced ? 0 : -5, rotateX: reduced ? 0 : 3,
+          initial={reduced ? false : { opacity: 0, y: 32, scale: 0.94 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1, rotateZ: 0, rotateY: 0, rotateX: 0,
             transition: reduced ? { duration: 0 } : { type: "spring", stiffness: 150, damping: 16, delay: index * 0.1 } }}
           viewport={{ once: true, amount: 0.3 }}
-          whileHover={reduced || !canDrag ? undefined : { y: -8, scale: 1.025, rotateZ: 0, rotateY: 0, rotateX: 0 }}
+          whileHover={reduced || !canDrag ? undefined : { y: -8, scale: 1.025 }}
           transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 240, damping: 22 }}>
           {surface}
         </motion.div>
@@ -108,14 +106,15 @@ export function ZoraRoom({ onDragChange }: { onDragChange: (dragging: boolean) =
           </div>
         </div>
         <div className="studio-stage" aria-label="房间里的三个模块">
-          <RoomObject id="blog" label="进入博客" index={0} tilt={-5} to="/blog" onDragChange={onDragChange}>
+          <div className="studio-board">
+          <RoomObject id="blog" label="进入博客" index={0} to="/blog" onDragChange={onDragChange}>
             <span className="object-topline"><BookOpen size={16} /><ArrowUpRight size={18} /></span>
             <span className="blog-sculpture" aria-hidden="true"><i /><i /><i /><BookOpen size={42} strokeWidth={1.2} /></span>
             <span className="object-copy"><strong>Blog<span>.</span></strong><span>记录技术，也收藏灵感。</span></span>
             <span className="object-bottomline"><span>探索文章</span><ArrowRight size={17} /></span>
           </RoomObject>
           <Dialog>
-            <RoomObject id="projects" label="查看项目" index={1} tilt={4} onDragChange={onDragChange}>
+            <RoomObject id="projects" label="查看项目" index={1} onDragChange={onDragChange}>
               <span className="object-topline"><Code2 size={16} /><ArrowUpRight size={16} /></span>
               <span className="project-art" aria-hidden="true"><span><i /><i /><i /></span><i /><i /><i /></span>
               <span className="object-copy"><strong>Projects<span>.</span></strong><span>慢慢把想法做出来。</span></span>
@@ -128,7 +127,7 @@ export function ZoraRoom({ onDragChange }: { onDragChange: (dragging: boolean) =
             </DialogContent>
           </Dialog>
           <Dialog>
-            <RoomObject id="about" label="认识 Zora" index={2} tilt={-3} onDragChange={onDragChange}>
+            <RoomObject id="about" label="认识 Zora" index={2} onDragChange={onDragChange}>
               <span className="object-topline"><ArrowUpRight size={16} /></span>
               <span className="about-object-main"><span className="studio-avatar">z<span>.</span></span><span><strong>Zora</strong><small>Front-end Developer</small></span></span>
               <span className="about-object-note">保持好奇，认真创造。</span>
@@ -139,6 +138,7 @@ export function ZoraRoom({ onDragChange }: { onDragChange: (dragging: boolean) =
               <div className="studio-interests"><span>前端开发</span><span>工程实践</span><span>交互设计</span><span>持续学习</span></div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
         <div className="studio-instructions"><span className="desktop-room-hint">轻轻拖动，松手就会回到原处。</span><span className="mobile-room-hint">点击，进来坐坐。</span></div>
       </div>
