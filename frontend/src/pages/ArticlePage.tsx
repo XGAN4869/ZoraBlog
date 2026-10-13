@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowLeft, Copy, List } from "lucide-react";
-import { toast } from "sonner";
+import { ArrowLeft, Download, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,34 +14,10 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/base/sidebar";
 import { ArticleDirectory } from "@/components/ArticleDirectory";
 import { ArticleOutline } from "@/components/ArticleOutline";
 import { ArticleCard, Cover } from "@/components/ArticleCard";
-import { IconAction } from "@/components/IconAction";
+import { CodeBlock } from "@/components/CodeBlock";
+import { MarkdownArticle } from "@/components/MarkdownArticle";
 import { NotFound } from "@/pages/NotFound";
 import { articles } from "@/data/articles";
-
-function CodeBlock({ code }: { code: string }) {
-  return (
-    <div className="code-block">
-      <div>
-        <IconAction
-          label="复制代码"
-          onClick={async () => {
-            try {
-              await navigator.clipboard.writeText(code);
-              toast.success("代码已复制");
-            } catch {
-              toast.error("复制失败，请手动选择代码");
-            }
-          }}
-        >
-          <Copy />
-        </IconAction>
-      </div>
-      <pre>
-        <code>{code}</code>
-      </pre>
-    </div>
-  );
-}
 
 export function ArticlePage() {
   const { slug } = useParams();
@@ -61,11 +36,12 @@ export function ArticlePage() {
             全部文章
           </Link>
           <div className="reading-tools">
+            {article.markdownUrl && <Button asChild variant="ghost" size="sm"><a href={article.markdownUrl} download={`${article.slug}.md`} aria-label="下载 Markdown"><Download />Markdown</a></Button>}
             <SidebarTrigger
               className="mobile-directory-trigger"
               aria-label="打开文章目录"
             />
-            <Button
+            {article.sections.length > 0 && <Button
               variant="ghost"
               size="icon"
               className="mobile-outline-trigger"
@@ -73,12 +49,12 @@ export function ArticlePage() {
               onClick={() => setOutlineOpen(true)}
             >
               <List />
-            </Button>
+            </Button>}
           </div>
         </div>
         <motion.div
           key={article.slug}
-          className="reading-layout"
+          className={`reading-layout${article.sections.length ? "" : " no-outline"}`}
           initial={{
             opacity: reducedMotion ? 1 : 0,
             y: reducedMotion ? 0 : 16,
@@ -101,10 +77,10 @@ export function ArticlePage() {
             <div className="author-line">
               <span className="mini-avatar">Z.</span>
               <span>Zora</span>
-              <span className="sample-label">示例文章</span>
+              {!article.markdown && <span className="sample-label">示例文章</span>}
             </div>
             <Cover article={article} />
-            <div className="article-prose">
+            {article.markdown ? <MarkdownArticle article={article} /> : <div className="article-prose">
               {article.sections.map((section, index) => (
                 <section key={section.heading} id={`section-${index}`}>
                   <h2>{section.heading}</h2>
@@ -114,7 +90,7 @@ export function ArticlePage() {
                   {section.code && <CodeBlock code={section.code} />}
                 </section>
               ))}
-            </div>
+            </div>}
           </article>
           <ArticleOutline key={article.slug} article={article} />
         </motion.div>

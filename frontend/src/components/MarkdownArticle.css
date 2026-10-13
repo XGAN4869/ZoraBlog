@@ -1,0 +1,33 @@
+.markdown-prose { margin-top: 40px; overflow-wrap: anywhere; }
+.markdown-prose :is(h2, h3, h4, h5, h6) { margin: 32px 0 16px; font-family: var(--font-heading); font-weight: 600; letter-spacing: -0.02em; scroll-margin-top: calc(var(--nav-height) + 24px); }
+.markdown-prose h2 { font-size: var(--text-heading); line-height: var(--line-heading); }
+.markdown-prose h3 { font-size: 24px; line-height: 32px; }
+.markdown-prose h4 { font-size: 20px; line-height: 28px; }
+.markdown-prose :is(h5, h6) { font-size: var(--text-body); line-height: var(--line-body); }
+.markdown-prose :is(h2, h3, h4, h5, h6):empty { display: none; }
+.markdown-prose :is(p, li, blockquote) { font-size: var(--text-body); line-height: var(--line-body); color: var(--muted-foreground); }
+.markdown-prose p { margin-bottom: 16px; }
+.markdown-prose :is(ul, ol) { margin: 16px 0; padding-left: 24px; }
+.markdown-prose ul { list-style: disc; }
+.markdown-prose ol { list-style: decimal; }
+.markdown-prose li { margin-block: 8px; }
+.markdown-prose li > p { margin-block: 8px; }
+.markdown-prose .contains-task-list { list-style: none; padding-left: 0; }
+.markdown-prose .task-list-item input { margin-right: 8px; accent-color: var(--primary); }
+.markdown-prose a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+.markdown-prose blockquote { margin: 24px 0; padding: 4px 20px; border-left: 3px solid var(--primary); background: var(--secondary); }
+.markdown-prose blockquote > p:last-child { margin-bottom: 0; }
+.markdown-prose :not(pre) > code { font: 0.9em var(--mono); color: var(--foreground); padding: 2px 5px; border-radius: 4px; background: var(--secondary); }
+.markdown-prose table { display: block; max-width: 100%; overflow-x: auto; margin: 24px 0; border-collapse: collapse; font-size: var(--text-small); line-height: var(--line-caption); }
+.markdown-prose :is(th, td) { border: 1px solid var(--border); padding: 12px 16px; min-width: 120px; vertical-align: top; }
+.markdown-prose th { background: var(--secondary); text-align: left; font-weight: 600; }
+.markdown-prose td { color: var(--muted-foreground); }
+.markdown-prose hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0; }
+.markdown-prose img { max-width: 100%; height: auto; }
+.markdown-prose .code-block pre { max-height: 520px; font-size: var(--text-small); line-height: var(--line-body); }
+.code-language { margin-right: auto; font: 500 var(--text-caption)/var(--line-caption) var(--mono); }
+.diagram-source { margin-top: 24px; }
+.diagram-source summary { cursor: pointer; font-size: var(--text-small); line-height: var(--line-body); color: var(--muted-foreground); }
+.markdown-prose .diagram-source .code-block { margin-top: 12px; }
+.reading-layout.no-outline { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 680px) { .markdown-prose h2 { font-size: 28px; line-height: 36px; } .markdown-prose h3 { font-size: 22px; line-height: 30px; } }

@@ -38,14 +38,18 @@ export function ArticleOutline({
     };
   }, [article]);
 
+  if (!article.sections.length) return null;
+  const minimumLevel = Math.min(...article.sections.map((section) => section.level ?? 1));
+
   return (
     <nav className="table-of-contents" aria-label="文章大纲">
       <span className="outline-heading">本页大纲</span>
       {article.sections.map((section, index) => (
         <a
-          key={section.heading}
+          key={`${index}-${section.heading}`}
           href={`#section-${index}`}
           aria-current={active === index ? "location" : undefined}
+          style={{ paddingInlineStart: Math.max(0, (section.level ?? 1) - minimumLevel) * 12 }}
           onClick={() => {
             setActive(index);
             onNavigate?.();

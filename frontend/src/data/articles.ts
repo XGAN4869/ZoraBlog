@@ -1,3 +1,5 @@
+import { markdownArticles } from "./notes";
+
 export type Article = {
   slug: string;
   title: string;
@@ -6,11 +8,15 @@ export type Article = {
   date: string;
   readTime: number;
   cover: "react" | "typescript" | "architecture" | "vue" | "css" | "notes";
-  sections: { heading: string; paragraphs: string[]; code?: string }[];
+  sections: { heading: string; paragraphs: string[]; code?: string; level?: number }[];
+  markdown?: string;
+  markdownUrl?: string;
+  source?: string;
 };
 
 // Local editorial fixtures keep the preview independent of the future Go API.
 export const articles: Article[] = [
+  ...markdownArticles,
   {
     slug: "react-component-boundaries",
     title: "好的 React 组件，从划清边界开始",
@@ -190,17 +196,24 @@ export const categories = [
   "TypeScript",
   "Vue",
   "CSS",
+  "Go",
   "工程实践",
   "手记",
 ];
 
 export function filterArticles(query: string, category = "全部") {
   const keyword = query.trim().toLocaleLowerCase();
-  return articles.filter(
+  const matching = articles.filter(
     (article) =>
       (category === "全部" || article.category === category) &&
-      `${article.title} ${article.summary} ${article.category}`
+      `${article.title} ${article.summary} ${article.category} ${article.markdown ?? ""}`
         .toLocaleLowerCase()
         .includes(keyword),
   );
+  if (!keyword) return matching;
+  // Prefer direct title/summary matches over an incidental mention in the body.
+  const relevance = (article: Article) => article.title.toLocaleLowerCase().includes(keyword) ? 3
+    : article.summary.toLocaleLowerCase().includes(keyword) ? 2
+    : article.category.toLocaleLowerCase().includes(keyword) ? 1 : 0;
+  return matching.sort((a, b) => relevance(b) - relevance(a));
 }

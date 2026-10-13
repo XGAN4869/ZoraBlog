@@ -30,6 +30,8 @@ try {
       ["blog", "/blog"],
       ["login", "/login"],
       ["article", "/articles/react-component-boundaries"],
+      ["markdown", "/articles/go-routing"],
+      ["obsidian", "/articles/ui-components-theme"],
     ]) {
       await page.goto(`${origin}${route}`);
       await page.waitForLoadState("networkidle");
@@ -82,7 +84,7 @@ try {
       });
     }
     await page.close();
-    console.log(`${name}: home, room, blog, login and article verified`);
+    console.log(`${name}: home, room, blog, login, article and Markdown notes verified`);
   }
   assert.deepEqual(failures, [], "Browser console errors");
 } finally {

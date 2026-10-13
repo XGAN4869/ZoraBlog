@@ -7,6 +7,7 @@ export const articleModules = [
     categories: ["React", "Vue", "TypeScript", "CSS"],
   },
   { id: "engineering", label: "工程", categories: ["工程实践"] },
+  { id: "backend", label: "后端", categories: ["Go"] },
   { id: "journal", label: "手记", categories: ["手记"] },
 ];
 
