@@ -52,7 +52,9 @@ GitHub access token 只用于这次后端身份查询，不写入数据库、Coo
 
 ## 数据库兼容
 
-程序自动创建 `oauth_users`、`oauth_sessions`、`oauth_login_requests`，需要建表权限。
+数据库访问使用 GORM 和 MySQL 驱动。`repository/models.go` 显式映射 `oauth_users`、`oauth_sessions`、`oauth_login_requests`；程序通过 GORM Migrator 创建缺失的表，需要建表权限。已有表沿用原结构，不执行自动修改表结构的 AutoMigrate。
+
+用户写入使用 GORM 的 OnConflict，按 GitHub ID 更新用户名和公开邮箱；会话读写使用模型查询。OAuth 请求在 GORM Transaction 中通过 FOR UPDATE 行锁一次性消费。模型不使用软删除，退出和消费请求会实际删除记录；SQL 日志关闭，避免输出会话哈希及 PKCE verifier。
 
 原 `auth_users`、`auth_sessions` 保留，不删除旧账户数据；新登录不读取它们，旧 JWT 不再被接受。已有密码账户不会自动与 GitHub 账户合并。
 

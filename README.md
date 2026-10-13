@@ -15,7 +15,9 @@ Go_React_Blog/
     ├── service/
     │   ├── auth.go           # OAuth 请求与本站随机会话
     │   └── github.go         # GitHub 授权码交换和用户 API
-    ├── repository/auth.go    # MySQL 用户、会话和一次性 OAuth 请求
+    ├── repository/           # GORM + MySQL 用户、会话和一次性 OAuth 请求
+    │   ├── auth.go           # 数据库连接、查询和事务
+    │   └── models.go         # OAuth 表模型
     ├── dto/                  # HTTP 响应和 GitHub API 数据结构
     ├── middleware/
     │   ├── auth.go           # 读取本站会话 Cookie
