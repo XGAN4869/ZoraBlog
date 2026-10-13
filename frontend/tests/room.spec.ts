@@ -111,7 +111,7 @@ for (const [name, viewport] of [
     await page.screenshot({ path: `test-results/studio-${name}.png` });
     await page.getByRole("link", { name: "回到 Hi, Zora" }).click();
     await expect.poll(() => page.locator(".home-page").evaluate((element) => element.scrollTop)).toBe(0);
-    await expect(page.getByRole("heading", { name: "Hi, I'm Zora." })).toBeInViewport();
+    await expect(page.getByRole("heading", { name: "Hi, Zora." })).toBeInViewport();
     expect(errors).toEqual([]);
   });
 }

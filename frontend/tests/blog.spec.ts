@@ -7,10 +7,13 @@ test.beforeEach(async ({ page }) => {
 test("home preserves the greeting and opens the filterable blog", async ({ page }) => {
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { name: "Hi, I'm Zora." }),
+    page.getByRole("heading", { name: "Hi, Zora." }),
   ).toBeVisible();
   await expect(page.locator(".home-page canvas")).toHaveCount(1);
   await expect(page.locator("#hello canvas")).toBeVisible();
+  await expect(page.locator(".hero-terminal-greeting")).toHaveAttribute("data-typing-complete", "true");
+  await expect(page.locator(".hero-terminal-greeting")).toHaveText("Hi, Zora.");
+  await expect(page.locator(".hero-terminal-output")).toHaveCSS("opacity", "1");
   await page.getByRole("link", { name: "探索文章", exact: true }).click();
   await expect(page).toHaveURL("/blog");
   await page.getByRole("tab", { name: "TypeScript", exact: true }).click();
@@ -28,6 +31,23 @@ test("search opens with keyboard and finds an article", async ({ page }) => {
   await page.getByPlaceholder("搜索文章、技术或关键词…").fill("computed");
   await page.getByRole("dialog").getByRole("link").first().click();
   await expect(page).toHaveURL(/vue-composable-state/);
+});
+
+test("terminal respects reduced motion and fits compact screens", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const viewport of [{ width: 320, height: 568 }, { width: 844, height: 390 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    const greeting = page.getByRole("heading", { name: "Hi, Zora." });
+    await expect(greeting).toHaveText("Hi, Zora.");
+    await expect(page.locator(".hero-terminal-output")).toHaveCSS("opacity", "1");
+    await expect(page.locator(".hero-terminal .terminal-cursor")).toHaveCSS("animation-name", "none");
+    await expect(page.getByRole("link", { name: "探索文章", exact: true })).toBeInViewport({ ratio: 1 });
+    const terminal = await page.locator(".hero-terminal").boundingBox();
+    expect(terminal!.y).toBeGreaterThanOrEqual(await page.locator(".site-header").evaluate((element) => element.clientHeight));
+    expect(await greeting.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
 });
 
 test("theme persists and mobile layout stays in viewport", async ({ page }) => {

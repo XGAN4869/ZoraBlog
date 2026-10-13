@@ -40,6 +40,10 @@ try {
         `${name}/${routeName}: horizontal overflow`,
       );
       if (routeName === "home") {
+        await page.locator('.hero-terminal-greeting[data-typing-complete="true"]').waitFor();
+        await page.locator(".hero-terminal-output").evaluate(async (element) => {
+          await Promise.all(element.getAnimations().map((animation) => animation.finished));
+        });
         const hero = await page.locator(".hero").boundingBox();
         const heading = await page.locator(".hero h1").boundingBox();
         assert(

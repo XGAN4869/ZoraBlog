@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
+import { AnimatedSpan, Terminal, TypingAnimation } from "@/registry/magicui/terminal";
 import { ShapeGrid } from "@/components/ShapeGrid";
 import { ZoraRoom } from "@/components/ZoraRoom";
 import "./Home.css";
 
 export function Home() {
+  const reducedMotion = useReducedMotion();
   const { resolvedTheme } = useTheme();
   const location = useLocation();
   const scrollRef = useRef<HTMLElement>(null);
@@ -40,17 +42,18 @@ export function Home() {
         <div className="grid-shade" />
         <motion.div
           className="hero-content"
-          initial={{ opacity: 0, y: 20 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75 }}
+          transition={{ duration: reducedMotion ? 0 : 0.75 }}
         >
-          <h1>
-            Hi, I'm <span>Zora</span>
-            <span className="title-period">.</span>
-          </h1>
-          <h2>
-            写代码，也写下思考<span className="text-cursor">_</span>
-          </h2>
+          <Terminal className="hero-terminal">
+            <TypingAnimation as="h1" duration={85} className="hero-terminal-greeting">
+              Hi, Zora.
+            </TypingAnimation>
+            <AnimatedSpan className="hero-terminal-output">
+              <p>写代码，也写下思考</p>
+            </AnimatedSpan>
+          </Terminal>
           <div className="hero-buttons">
             <InteractiveHoverButton asChild className="w-[136px] md:w-40">
               <Link to="/blog">探索文章</Link>
