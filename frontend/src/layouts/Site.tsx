@@ -1,9 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, BookOpen, LogOut, Menu, Moon, Search, Sun, UserRound, X } from "lucide-react";
+import { ArrowUpRight, BookOpen, LogOut, Menu, Search, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Toaster } from "@/components/ui/sonner";
 import { BlogNavigation } from "@/components/BlogNavigation";
-import { IconAction } from "@/components/IconAction";
+import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import { articleModules, categoryArticles } from "@/data/navigation";
 import { articles, filterArticles } from "@/data/articles";
 
@@ -52,7 +51,6 @@ function Brand() {
 }
 
 function Header({ onSearch }: { onSearch: () => void }) {
-  const { resolvedTheme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -64,7 +62,6 @@ function Header({ onSearch }: { onSearch: () => void }) {
     catch (error) { toast.error(error instanceof Error ? error.message : "退出失败，请稍后重试"); }
     finally { setLoggingOut(false); }
   }
-  const light = resolvedTheme === "light";
   return (
     <header className="site-header">
       <Brand />
@@ -82,12 +79,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
           <span>搜索</span>
         </Button>
         <span className="action-divider" />
-        <IconAction
-          label={`切换到${light ? "暗" : "亮"}色主题`}
-          onClick={() => setTheme(light ? "dark" : "light")}
-        >
-          {light ? <Moon /> : <Sun />}
-        </IconAction>
+        <AnimatedThemeToggler />
         {user ? <DropdownMenu>
           <DropdownMenuTrigger asChild><button type="button" className="header-account" aria-label={`账户：${user.username}`}><UserRound size={16} /><span>{user.username}</span></button></DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="account-menu">
