@@ -197,6 +197,9 @@ export const categories = [
   "Vue",
   "CSS",
   "Go",
+  "JavaScript",
+  "浏览器",
+  "Node.js",
   "工程实践",
   "手记",
 ];

@@ -13,11 +13,12 @@ import {
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/base/sidebar";
 import { ArticleDirectory } from "@/components/ArticleDirectory";
 import { ArticleOutline } from "@/components/ArticleOutline";
-import { ArticleCard, Cover } from "@/components/ArticleCard";
+import { Cover } from "@/components/ArticleCard";
 import { CodeBlock } from "@/components/CodeBlock";
 import { MarkdownArticle } from "@/components/MarkdownArticle";
 import { NotFound } from "@/pages/NotFound";
 import { articles } from "@/data/articles";
+import { readingArticles } from "@/data/navigation";
 
 export function ArticlePage() {
   const { slug } = useParams();
@@ -25,15 +26,17 @@ export function ArticlePage() {
   const reducedMotion = useReducedMotion();
   const article = articles.find((item) => item.slug === slug);
   if (!article) return <NotFound />;
-  const related = articles.filter((item) => item.slug !== slug).slice(0, 3);
+  const index = readingArticles.findIndex((item) => item.slug === slug);
+  const previous = readingArticles[index - 1];
+  const next = readingArticles[index + 1];
   return (
     <main className="article-page shell">
       <SidebarProvider className="article-reading-shell">
         <ArticleDirectory slug={article.slug} />
         <div className="reading-toolbar">
-          <Link to="/#articles" className="back-link">
+          <Link to="/#room" className="back-link">
             <ArrowLeft />
-            全部文章
+            回到房间
           </Link>
           <div className="reading-tools">
             {article.markdownUrl && <Button asChild variant="ghost" size="sm"><a href={article.markdownUrl} download={`${article.slug}.md`} aria-label="下载 Markdown"><Download />Markdown</a></Button>}
@@ -73,7 +76,7 @@ export function ArticlePage() {
               </span>
             </div>
             <h1>{article.title}</h1>
-            <p className="article-lead">{article.summary}</p>
+            {article.summary && <p className="article-lead">{article.summary}</p>}
             <div className="author-line">
               <span className="mini-avatar">Z.</span>
               <span>Zora</span>
@@ -87,10 +90,18 @@ export function ArticlePage() {
                   {section.paragraphs.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
-                  {section.code && <CodeBlock code={section.code} />}
+                  {section.code && <CodeBlock code={section.code} language={{ React: "tsx", TypeScript: "ts", Vue: "ts", CSS: "css", Go: "go" }[article.category]} />}
                 </section>
               ))}
             </div>}
+            <nav className="article-pagination" aria-label="文章翻页">
+              {previous && <Link className="page-link previous-page" to={`/articles/${previous.slug}`} rel="prev" aria-label={`Previous: ${previous.title}`}>
+                <span>Previous</span><strong>{previous.title}</strong>
+              </Link>}
+              {next && <Link className="page-link next-page" to={`/articles/${next.slug}`} rel="next" aria-label={`Next: ${next.title}`}>
+                <span>Next</span><strong>{next.title}</strong>
+              </Link>}
+            </nav>
           </article>
           <ArticleOutline key={article.slug} article={article} />
         </motion.div>
@@ -107,18 +118,6 @@ export function ArticlePage() {
           </DialogContent>
         </Dialog>
       </SidebarProvider>
-      <div className="related-articles">
-        <div className="section-heading">
-          <h2>
-            继续探索<span className="blue-period">.</span>
-          </h2>
-        </div>
-        <div className="article-grid">
-          {related.map((item, index) => (
-            <ArticleCard article={item} index={index} key={item.slug} />
-          ))}
-        </div>
-      </div>
     </main>
   );
 }

@@ -1,11 +1,14 @@
 import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 
 const origin = process.env.PREVIEW_URL || "http://127.0.0.1:5174";
 await mkdir("test-results/visual", { recursive: true });
 const browser = await chromium.launch();
 const failures = [];
+const roadmap = JSON.parse(await readFile(new URL("../src/content/roadmap.json", import.meta.url), "utf8"));
+const imageNote = roadmap.notes.find((note) => note.file.endsWith("TypeScript/小满Zs/Mixins.md"));
 
 try {
   for (const [name, viewport, theme] of [
@@ -32,6 +35,7 @@ try {
       ["article", "/articles/react-component-boundaries"],
       ["markdown", "/articles/go-routing"],
       ["obsidian", "/articles/ui-components-theme"],
+      ["roadmap", `/articles/${imageNote.slug}`],
     ]) {
       await page.goto(`${origin}${route}`);
       await page.waitForLoadState("networkidle");
@@ -66,6 +70,14 @@ try {
         assert(Math.abs(room.y) < 1 && Math.abs(room.height - viewport.height) < 1, `${name}: room framing`);
         await page.screenshot({ path: `test-results/visual/${name}-room.png` });
         await page.locator(".home-page").evaluate((element) => element.scrollTo({ top: 0, behavior: "instant" }));
+      }
+      if (routeName !== "home" && routeName !== "login") {
+        assert(await page.locator(".article-card").count() === 0, `${name}/${routeName}: removed article cards`);
+        await page.locator(".article-pagination").waitFor();
+      }
+      if (routeName === "roadmap") {
+        await page.locator(".markdown-prose img").scrollIntoViewIfNeeded();
+        await page.waitForFunction(() => [...document.querySelectorAll(".markdown-prose img")].every((image) => image.complete && image.naturalWidth > 0));
       }
       // Reveal viewport-triggered article animations before full-page capture.
       for (

@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { BookOpen, ChevronRight, Folder } from "lucide-react";
-import { articleModules, categoryArticles } from "@/data/navigation";
+import { readingModules, categoryArticles } from "@/data/navigation";
 import {
   DIRECTORY_EASE,
   useDirectoryMotion,
@@ -169,7 +169,7 @@ export function ArticleDirectory({ slug }: { slug: string }) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  render={<Link to="/#articles" />}
+                  render={<Link to="/blog" />}
                   onClick={() => setOpenMobile(false)}
                 >
                   <BookOpen />
@@ -186,7 +186,7 @@ export function ArticleDirectory({ slug }: { slug: string }) {
           />
         </SidebarHeader>
         <SidebarContent>
-          {articleModules.map((module) => (
+          {readingModules.map((module) => (
             <SidebarGroup key={module.id}>
               <SidebarGroupLabel
                 className="overflow-hidden transition-none"

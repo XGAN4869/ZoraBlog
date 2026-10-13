@@ -22,7 +22,7 @@ test("registration, refresh, logout and email login use the API without browser 
   await page.getByLabel("密码", { exact: true }).fill("valid-password");
   await page.getByLabel("确认密码").fill("valid-password");
   await page.getByRole("button", { name: "注册并登录", exact: true }).click();
-  await expect(page).toHaveURL("/blog");
+  await expect(page).toHaveURL("/articles/go-syntax");
   await page.reload();
   await page.getByRole("button", { name: "账户：visitor" }).click();
   await page.getByRole("menuitem", { name: "退出登录" }).click();
@@ -32,7 +32,7 @@ test("registration, refresh, logout and email login use the API without browser 
   await page.getByLabel("密码", { exact: true }).fill("valid-password");
   await page.getByRole("checkbox", { name: "保持登录 30 天" }).check();
   await page.getByRole("button", { name: "登录", exact: true }).click();
-  await expect(page).toHaveURL("/blog");
+  await expect(page).toHaveURL("/articles/go-syntax");
   const storage = await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }));
   expect(storage).not.toContain("valid-password");
   expect(storage).not.toContain("visitor");

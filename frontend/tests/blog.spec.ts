@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/api/session", (route) => route.fulfill({ json: { code: 0, data: { user: null } } }));
 });
 
-test("home preserves the greeting and opens the filterable blog", async ({ page }) => {
+test("home preserves the greeting and opens the first document", async ({ page }) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Hi, Zora." }),
@@ -17,10 +17,10 @@ test("home preserves the greeting and opens the filterable blog", async ({ page 
   await expect(page.locator(".hero-terminal-output")).toHaveText("Here to explore your world, one moment at a time.");
   await expect(page.locator(".hero-terminal-output")).toHaveAttribute("data-typing-complete", "true");
   await page.getByRole("link", { name: "探索文章", exact: true }).click();
-  await expect(page).toHaveURL("/blog");
-  await page.getByRole("tab", { name: "TypeScript", exact: true }).click();
-  await expect(page.locator(".article-card")).toHaveCount(1);
-  await page.locator(".article-card").click();
+  await expect(page).toHaveURL("/articles/go-syntax");
+  const directory = page.getByRole("navigation", { name: "文章分类目录" });
+  await directory.getByRole("button", { name: "TypeScript", exact: true }).click();
+  await directory.getByRole("link", { name: "用 TypeScript，把“不可能”写进类型", exact: true }).click();
   await expect(page).toHaveURL(/\/articles\/typescript-discriminated-unions/);
   await expect(
     page.getByRole("heading", { name: "用状态标签关联数据" }),
@@ -31,7 +31,7 @@ test("search opens with keyboard and finds an article", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("Control+k");
   await page.getByPlaceholder("搜索文章、技术或关键词…").fill("computed");
-  await page.getByRole("dialog").getByRole("link").first().click();
+  await page.getByRole("dialog").getByRole("link", { name: /Vue 组合式函数：复用逻辑/ }).click();
   await expect(page).toHaveURL(/vue-composable-state/);
 });
 
@@ -259,11 +259,12 @@ test("category panels animate their height in both directions", async ({
   await trigger.click();
   const opening = await heights();
   expect(Math.max(...opening) - Math.min(...opening)).toBeGreaterThan(1);
-  await expect(category.getByRole("link")).toBeVisible();
+  const articleLink = category.getByRole("link", { name: "Vue 组合式函数：复用逻辑，也保留边界", exact: true });
+  await expect(articleLink).toBeVisible();
   await trigger.click();
   const closing = await heights();
   expect(Math.max(...closing) - Math.min(...closing)).toBeGreaterThan(1);
-  await expect(category.getByRole("link")).not.toBeVisible();
+  await expect(articleLink).not.toBeVisible();
 });
 
 test("sidebar and article animate together without moving the top navigation", async ({

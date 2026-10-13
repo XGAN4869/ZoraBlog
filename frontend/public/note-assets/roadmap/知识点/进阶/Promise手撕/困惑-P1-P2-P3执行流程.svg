@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1830" viewBox="0 0 1800 1830" role="img" aria-labelledby="title desc">
+  <title id="title">结合用户 Promise 源码解释 P1、P2、P3 的执行流程</title>
+  <desc id="desc">左侧展示用户截图里的调用代码与 then 关键源码，右侧逐步说明 P1、P2、P3 的创建、状态接力和最终输出。</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#334155" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#4f46e5"/>
+    </marker>
+    <style>
+      .page-title { font: 700 34px "Microsoft YaHei", "PingFang SC", sans-serif; fill: #172033; }
+      .page-subtitle { font: 400 17px "Microsoft YaHei", "PingFang SC", sans-serif; fill: #56657a; }
+      .section-title { font: 700 22px "Microsoft YaHei", "PingFang SC", sans-serif; fill: #172033; }
+      .node-title { font: 700 17px "Microsoft YaHei", "PingFang SC", sans-serif; fill: #172033; }
+      .body { font: 400 15px "Microsoft YaHei", "PingFang SC", sans-serif; fill: #334155; }
+      .small { font: 400 13px "Microsoft YaHei", "PingFang SC", sans-serif; fill: #64748b; }
+      .code { font: 400 15px Consolas, "Microsoft YaHei", monospace; fill: #24314a; }
+      .code-strong { font: 700 15px Consolas, "Microsoft YaHei", monospace; fill: #1e293b; }
+      .line-no { font: 400 13px Consolas, monospace; fill: #94a3b8; }
+      .badge { font: 700 14px "Microsoft YaHei", sans-serif; fill: #ffffff; }
+      .panel { fill: #ffffff; stroke: #dbe3ef; stroke-width: 1.5; filter: url(#shadow); }
+      .arrow { fill: none; stroke: #4f46e5; stroke-width: 3; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1830" fill="#f7f9fc"/>
+  <text x="45" y="55" class="page-title">用你的源码解释：P1、P2、P3 到底怎么接力</text>
+  <text x="45" y="86" class="page-subtitle">左边是你截图里的代码结构；右边的编号对应源码真实进入的位置。P1/P2/P3 是为了学习临时起的名字。</text>
+
+  <rect x="35" y="115" width="970" height="405" rx="20" class="panel"/>
+  <text x="65" y="155" class="section-title">A. 你的调用代码：三个 Promise 在哪里</text>
+  <rect x="65" y="180" width="910" height="310" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="88" y="203" width="855" height="49" rx="8" fill="#dcfce7"/>
+  <rect x="88" y="268" width="855" height="49" rx="8" fill="#dbeafe"/>
+  <rect x="88" y="300" width="855" height="119" rx="8" fill="#ffedd5"/>
+  <rect x="88" y="425" width="855" height="49" rx="8" fill="#ede9fe"/>
+
+  <text x="78" y="227" text-anchor="end" class="line-no">1</text>
+  <text x="100" y="227" class="code-strong">const p = new Promise((resolve) =&gt; {</text>
+  <text x="100" y="249" class="code">  resolve(10);</text>
+  <text x="78" y="291" text-anchor="end" class="line-no">2</text>
+  <text x="100" y="291" class="code-strong">p.then((value) =&gt; {</text>
+  <text x="78" y="323" text-anchor="end" class="line-no">3</text>
+  <text x="100" y="323" class="code-strong">  return new Promise((resolve) =&gt; {</text>
+  <text x="100" y="347" class="code">    setTimeout(() =&gt; {</text>
+  <text x="100" y="371" class="code-strong">      resolve(value * 2);</text>
+  <text x="100" y="395" class="code">    }, 1000);</text>
+  <text x="100" y="417" class="code">  });</text>
+  <text x="78" y="449" text-anchor="end" class="line-no">4</text>
+  <text x="100" y="449" class="code-strong">}).then((result) =&gt; console.log(result));</text>
+
+  <rect x="725" y="210" width="205" height="30" rx="15" fill="#22c55e"/>
+  <text x="827" y="231" text-anchor="middle" class="badge">P1：最外层 p</text>
+  <rect x="725" y="277" width="205" height="30" rx="15" fill="#3b82f6"/>
+  <text x="827" y="298" text-anchor="middle" class="badge">第一次 then 返回 P2</text>
+  <rect x="725" y="328" width="205" height="30" rx="15" fill="#f97316"/>
+  <text x="827" y="349" text-anchor="middle" class="badge">回调内部创建 P3</text>
+  <rect x="725" y="435" width="205" height="30" rx="15" fill="#8b5cf6"/>
+  <text x="827" y="456" text-anchor="middle" class="badge">这里监听的是 P2</text>
+
+  <rect x="35" y="545" width="970" height="600" rx="20" class="panel"/>
+  <text x="65" y="585" class="section-title">B. 你的 then 源码：接力发生在哪几行</text>
+  <rect x="65" y="610" width="910" height="505" rx="14" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="88" y="632" width="855" height="51" rx="8" fill="#dbeafe"/>
+  <rect x="88" y="695" width="855" height="51" rx="8" fill="#ede9fe"/>
+  <rect x="88" y="758" width="855" height="76" rx="8" fill="#fef3c7"/>
+  <rect x="88" y="845" width="855" height="100" rx="8" fill="#ffedd5"/>
+  <rect x="88" y="956" width="855" height="51" rx="8" fill="#fee2e2"/>
+  <rect x="88" y="1019" width="855" height="96" rx="8" fill="#e0f2fe"/>
+
+  <text x="78" y="655" text-anchor="end" class="line-no">①</text>
+  <text x="100" y="655" class="code-strong">return new Promise((resolve, reject) =&gt; {</text>
+  <text x="610" y="655" class="small">// 这次调用中，它就是 P2</text>
+  <text x="78" y="718" text-anchor="end" class="line-no">②</text>
+  <text x="100" y="718" class="code-strong">const handle = (callback) =&gt; {</text>
+  <text x="100" y="742" class="code">  queueMicrotask(() =&gt; {</text>
+  <text x="78" y="781" text-anchor="end" class="line-no">③</text>
+  <text x="100" y="781" class="code-strong">const result = callback(this.result)</text>
+  <text x="100" y="808" class="small">第一次执行时：this === P1，this.result === 10</text>
+  <text x="78" y="868" text-anchor="end" class="line-no">④</text>
+  <text x="100" y="868" class="code-strong">if (result instanceof Promise) {</text>
+  <text x="100" y="894" class="code-strong">  result.then(resolve, reject)</text>
+  <text x="100" y="920" class="code">} else { resolve(result) }</text>
+  <text x="78" y="979" text-anchor="end" class="line-no">⑤</text>
+  <text x="100" y="979" class="code-strong">catch (err) { reject(err) }</text>
+  <text x="78" y="1042" text-anchor="end" class="line-no">⑥</text>
+  <text x="100" y="1042" class="code-strong">if (this.state === 'fulfilled') handle(onFullFilled)</text>
+  <text x="100" y="1068" class="code-strong">if (this.state === 'reject') handle(onRejected)</text>
+  <text x="100" y="1090" class="code-strong">this.callbacks.push({</text>
+  <text x="100" y="1111" class="code-strong">  onFullFilled: () =&gt; handle(onFullFilled), onRejected: () =&gt; handle(onRejected) })</text>
+
+  <rect x="1035" y="115" width="730" height="1030" rx="20" class="panel"/>
+  <text x="1065" y="155" class="section-title">C. 把你的调用代码放进 then 源码执行</text>
+
+  <rect x="1070" y="185" width="660" height="98" rx="15" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <circle cx="1102" cy="216" r="17" fill="#22c55e"/>
+  <text x="1102" y="222" text-anchor="middle" class="badge">1</text>
+  <text x="1132" y="216" class="node-title">调用代码第 1 段：创建 P1</text>
+  <text x="1132" y="246" class="body">resolve(10) 在概念上就是 resolveP1(10)，P1.result = 10。</text>
+  <path d="M1400 283V306" class="arrow"/>
+
+  <rect x="1070" y="312" width="660" height="110" rx="15" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <circle cx="1102" cy="343" r="17" fill="#3b82f6"/>
+  <text x="1102" y="349" text-anchor="middle" class="badge">2</text>
+  <text x="1132" y="343" class="node-title">调用代码第 2 段：执行 P1.then</text>
+  <text x="1132" y="373" class="body">进入源码 ①，return new Promise(...) 创建并返回 P2。</text>
+  <text x="1132" y="399" class="small">此时源码里的 resolve / reject 就是 resolveP2 / rejectP2。</text>
+  <path d="M1400 422V445" class="arrow"/>
+
+  <rect x="1070" y="451" width="660" height="110" rx="15" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+  <circle cx="1102" cy="482" r="17" fill="#8b5cf6"/>
+  <text x="1102" y="488" text-anchor="middle" class="badge">3</text>
+  <text x="1132" y="482" class="node-title">调用代码第 4 段：马上又调用 P2.then</text>
+  <text x="1132" y="512" class="body">P2 还是 pending，所以走源码 ⑥，把打印回调存入 P2.callbacks。</text>
+  <text x="1132" y="538" class="small">这一刻不会打印，因为 P2 还没得到结果。</text>
+  <path d="M1400 561V584" class="arrow"/>
+
+  <rect x="1070" y="590" width="660" height="110" rx="15" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <circle cx="1102" cy="621" r="17" fill="#d97706"/>
+  <text x="1102" y="627" text-anchor="middle" class="badge">4</text>
+  <text x="1132" y="621" class="node-title">微任务执行源码 ③</text>
+  <text x="1132" y="651" class="code-strong">const result = callback(this.result)</text>
+  <text x="1132" y="677" class="body">等价于执行第一次回调 callback(10)。</text>
+  <path d="M1400 700V723" class="arrow"/>
+
+  <rect x="1070" y="729" width="660" height="110" rx="15" fill="#ffedd5" stroke="#f97316" stroke-width="2"/>
+  <circle cx="1102" cy="760" r="17" fill="#f97316"/>
+  <text x="1102" y="766" text-anchor="middle" class="badge">5</text>
+  <text x="1132" y="760" class="node-title">你的回调创建并返回 P3</text>
+  <text x="1132" y="790" class="body">调用代码第 3 段返回内层 Promise，因此 result 变量里保存的是 P3。</text>
+  <text x="1132" y="816" class="small">P3 的 executor 立即注册 1 秒定时器，P3 暂时 pending。</text>
+  <path d="M1400 839V862" class="arrow"/>
+
+  <rect x="1070" y="868" width="660" height="110" rx="15" fill="#fff2cc" stroke="#d97706" stroke-width="2"/>
+  <circle cx="1102" cy="899" r="17" fill="#d97706"/>
+  <text x="1102" y="905" text-anchor="middle" class="badge">6</text>
+  <text x="1132" y="899" class="node-title">源码 ④ 判断为 true，发生状态接力</text>
+  <text x="1132" y="929" class="code-strong">result.then(resolve, reject)</text>
+  <text x="1132" y="955" class="body">本次真实含义：P3.then(resolveP2, rejectP2)。</text>
+  <path d="M1400 978V1001" class="arrow"/>
+
+  <rect x="1070" y="1007" width="660" height="105" rx="15" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <circle cx="1102" cy="1038" r="17" fill="#22c55e"/>
+  <text x="1102" y="1044" text-anchor="middle" class="badge">7</text>
+  <text x="1132" y="1038" class="node-title">一秒后：P3 把 20 交给 P2</text>
+  <text x="1132" y="1068" class="body">resolveP3(20) → P3 fulfilled → resolveP2(20)。</text>
+  <text x="1132" y="1094" class="body">P2 fulfilled 后执行已保存回调，最终 console.log(20)。</text>
+
+  <rect x="35" y="1175" width="1730" height="115" rx="18" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
+  <text x="65" y="1212" class="section-title">源码观察：上面的接力图表示你想实现的逻辑；截图中的当前代码还有几处会影响实际运行</text>
+  <text x="65" y="1247" class="body">① function resolve/reject 直接调用时，this 不一定是 Promise 实例；② this.callbacks = cb =&gt; ... 会覆盖数组，且 onFulfilled / onFullFilled 拼写不一致；</text>
+  <text x="65" y="1277" class="body">③ 默认失败回调写成 r =&gt; throw r 会语法错误；④ constructor 捕获异常后直接 throw，不会把当前 Promise 变成 rejected。</text>
+
+  <!-- result.then(resolve, reject) 完整展开 -->
+  <rect x="35" y="1320" width="1730" height="475" rx="20" class="panel"/>
+  <text x="65" y="1360" class="section-title">D. `result.then(resolve, reject)` 完整展开：为什么 resolve / reject 能成为 then 的回调</text>
+  <text x="65" y="1388" class="small">它更准确地说是“同一个 then 方法再次被调用（再入/嵌套调用）”，不是同步执行到底的无限递归，因为 P3 此时 pending，会先保存回调。</text>
+
+  <rect x="65" y="1415" width="365" height="305" rx="16" fill="#fff2cc" stroke="#d97706" stroke-width="2"/>
+  <text x="90" y="1450" class="node-title">1. 这些变量现在分别装着谁</text>
+  <text x="90" y="1488" class="code-strong">result 里装着 P3</text>
+  <text x="90" y="1518" class="code-strong">resolve 里装着 resolveP2 函数</text>
+  <text x="90" y="1548" class="code-strong">reject 里装着 rejectP2 函数</text>
+  <text x="90" y="1588" class="body">所以源码：</text>
+  <text x="90" y="1618" class="code-strong">result.then(resolve, reject)</text>
+  <text x="90" y="1648" class="body">展开后就是：</text>
+  <text x="90" y="1678" class="code-strong">P3.then(resolveP2, rejectP2)</text>
+  <text x="90" y="1705" class="small">这里传入的不是 P3 自己的 resolveP3。</text>
+
+  <path d="M430 1565H465" class="arrow"/>
+  <text x="447" y="1548" text-anchor="middle" class="small">按位置传函数</text>
+
+  <rect x="470" y="1415" width="480" height="305" rx="16" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="495" y="1450" class="node-title">2. 第二次进入 then：this 已经是 P3</text>
+  <text x="495" y="1486" class="code-strong">P3.then(resolveP2, rejectP2)</text>
+  <text x="495" y="1524" class="body">then 只按参数位置接收函数：</text>
+  <text x="495" y="1555" class="code-strong">onFullFilled 形参接到 resolveP2</text>
+  <text x="495" y="1585" class="code-strong">onRejected 形参接到 rejectP2</text>
+  <text x="495" y="1623" class="body">同时，这次 then 仍会创建一个新 Promise：</text>
+  <text x="495" y="1654" class="code-strong">new Promise((resolveP4, rejectP4) =&gt; {})</text>
+  <text x="495" y="1685" class="small">这个 P4 是 P3.then 的返回值，但源码没有保存它。</text>
+  <text x="495" y="1710" class="small">P3 pending，所以先把 resolveP2 / rejectP2 存进 P3.callbacks。</text>
+
+  <path d="M950 1565H980" class="arrow"/>
+  <text x="965" y="1548" text-anchor="middle" class="small">P3 完成后</text>
+
+  <rect x="985" y="1415" width="750" height="305" rx="16" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <text x="1010" y="1450" class="node-title">3. P3 完成后，保存的函数才真正执行</text>
+  <text x="1010" y="1486" class="code-strong">成功：P3.result = 20</text>
+  <text x="1010" y="1516" class="code">handle(onFullFilled) → callback 里装着 resolveP2</text>
+  <text x="1010" y="1546" class="code-strong">callback(this.result) = resolveP2(P3.result)</text>
+  <text x="1010" y="1576" class="code-strong">= resolveP2(20) → P2 fulfilled(20)</text>
+  <line x1="1010" y1="1600" x2="1710" y2="1600" stroke="#b8dbc3" stroke-width="1.5"/>
+  <text x="1010" y="1632" class="code-strong">失败：P3.result = error</text>
+  <text x="1010" y="1662" class="code">handle(onRejected) → callback 里装着 rejectP2</text>
+  <text x="1010" y="1692" class="code-strong">rejectP2(error) → P2 rejected(error)</text>
+
+  <rect x="65" y="1740" width="1670" height="38" rx="12" fill="#e0f2fe"/>
+  <text x="900" y="1765" text-anchor="middle" class="body">不是 resolve/reject “替代”了回调：它们本身就是函数；第一个实参被形参 onFullFilled 接住，第二个实参被 onRejected 接住。</text>
+  <text x="900" y="1815" text-anchor="middle" class="page-subtitle">额外细节：resolveP2(20) 通常返回 undefined，因此第二次 then 创建但被忽略的 P4 最后会 fulfilled(undefined)。</text>
+</svg>

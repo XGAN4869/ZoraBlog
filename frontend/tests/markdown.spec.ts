@@ -33,10 +33,9 @@ test("Markdown parsing preserves heading levels and renders GFM safely", () => {
 
 test("Go notes appear in the blog, render tables, navigate outline, and download the original", async ({ page }) => {
   await page.goto("/blog");
-  await expect(page.locator(".article-card")).toHaveCount(16);
-  await page.getByRole("tab", { name: "Go", exact: true }).click();
-  await expect(page.locator(".article-card")).toHaveCount(9);
-  await page.getByRole("heading", { name: "Gin 路由与传参", exact: true }).click();
+  await expect(page).toHaveURL("/articles/go-syntax");
+  await expect(page.locator(".article-card")).toHaveCount(0);
+  await page.getByRole("navigation", { name: "文章分类目录" }).getByRole("link", { name: "Gin 路由与传参", exact: true }).click();
   await expect(page).toHaveURL(/\/articles\/go-routing/);
   await expect(page.locator(".markdown-prose table")).toHaveCount(2);
   await expect(page.locator(".sample-label")).toHaveCount(0);

@@ -26,6 +26,8 @@
 .markdown-prose img { max-width: 100%; height: auto; }
 .markdown-prose .code-block pre { max-height: 520px; font-size: var(--text-small); line-height: var(--line-body); }
 .code-language { margin-right: auto; font: 500 var(--text-caption)/var(--line-caption) var(--mono); }
+.syntax-token { color: var(--syntax-light); }
+.dark .syntax-token { color: var(--syntax-dark); }
 .diagram-source { margin-top: 24px; }
 .diagram-source summary { cursor: pointer; font-size: var(--text-small); line-height: var(--line-body); color: var(--muted-foreground); }
 .markdown-prose .diagram-source .code-block { margin-top: 12px; }

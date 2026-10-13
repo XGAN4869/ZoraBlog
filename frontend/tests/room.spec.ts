@@ -47,11 +47,10 @@ test("drag stays constrained, blocks wheel navigation, returns home and never op
   await expect.poll(async () => Math.abs((await object.boundingBox())!.x - start.x)).toBeLessThan(1);
   await expect.poll(async () => Math.abs((await object.boundingBox())!.y - start.y)).toBeLessThan(1);
   await page.getByRole("link", { name: "进入博客" }).click();
-  await expect(page).toHaveURL("/blog");
-  await expect(page.getByRole("tab", { name: "TypeScript", exact: true })).toBeVisible();
-  await page.getByRole("tab", { name: "TypeScript", exact: true }).click();
-  await expect(page.locator(".article-card")).toHaveCount(1);
-  await page.locator(".article-card").click();
+  await expect(page).toHaveURL("/articles/go-syntax");
+  const directory = page.getByRole("navigation", { name: "文章分类目录" });
+  await directory.getByRole("button", { name: "TypeScript", exact: true }).click();
+  await directory.getByRole("link", { name: "用 TypeScript，把“不可能”写进类型", exact: true }).click();
   await expect(page).toHaveURL(/typescript-discriminated-unions$/);
 });
 
@@ -70,11 +69,11 @@ test("room supports keyboard entry, accessible information dialogs, and old arti
   await page.keyboard.press("Escape");
   await page.getByRole("link", { name: "进入博客" }).focus();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL("/blog");
+  await expect(page).toHaveURL("/articles/go-syntax");
   await page.goto("/#articles");
-  await expect(page).toHaveURL("/blog");
+  await expect(page).toHaveURL("/articles/go-syntax");
   await page.goto("/#notes");
-  await expect(page.getByRole("tab", { name: "手记", exact: true })).toHaveAttribute("data-state", "active");
+  await expect(page).toHaveURL("/articles/learning-by-writing");
 });
 
 for (const [name, viewport] of [
@@ -142,6 +141,6 @@ test("touch tapping a mobile card opens the blog", async ({ browser }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openRoom(page);
   await page.getByRole("link", { name: "进入博客" }).tap();
-  await expect(page).toHaveURL("http://127.0.0.1:5174/blog");
+  await expect(page).toHaveURL("http://127.0.0.1:5174/articles/go-syntax");
   await context.close();
 });

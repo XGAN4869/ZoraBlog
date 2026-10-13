@@ -1,0 +1,750 @@
+{
+  "notes": [
+    {
+      "file": "roadmap/浏览器/浏览器原理1.md",
+      "source": "roadmap/浏览器/浏览器原理1.md",
+      "slug": "roadmap-5bbcfa448d16",
+      "title": "浏览器原理1",
+      "summary": "配合小视频观看 【30分钟弄懂浏览器历史与渲染基本流程 / 浏览器工作原理入门教程-哔哩哔哩】 https://b23.tv/ocghKbX",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/浏览器原理2.md",
+      "source": "roadmap/浏览器/浏览器原理2.md",
+      "slug": "roadmap-3b4a259d209f",
+      "title": "浏览器原理2",
+      "summary": "[[CPU、操作系统、chrome]] [[CPU、操作系统、chrome#image 版]] Chrome进程启动 ↓ 创建渲染进程和线程 ↓ 初始化V8运行时 ↓",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/专有名词.md",
+      "source": "roadmap/浏览器/专有名词.md",
+      "slug": "roadmap-893fd07c6da4",
+      "title": "专有名词",
+      "summary": "线程是 进程内部的一条执行路线 线程共享所在进程的内存和资源 多线程执行效率更高，所以线程有多条",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/CPU、操作系统、chrome.md",
+      "source": "roadmap/浏览器/CPU、操作系统、chrome.md",
+      "slug": "roadmap-030296989865",
+      "title": "CPU、操作系统、chrome",
+      "summary": "Chrome └── 提交任务：打开窗口、解析网页、执行 JavaScript",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/00-总览与学习路线.md",
+      "source": "roadmap/浏览器/gpt前端场景/00-总览与学习路线.md",
+      "slug": "roadmap-f974bfbabc01",
+      "title": "浏览器原理与前端场景：学习路线",
+      "summary": "这组文档回答一个实际问题：浏览器底层的进程、线程、内存、解析、解释执行和 JIT，分别会在前端工作中什么时候帮上忙。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/01-浏览器启动进程与线程.md",
+      "source": "roadmap/浏览器/gpt前端场景/01-浏览器启动进程与线程.md",
+      "slug": "roadmap-d2429623fd79",
+      "title": "浏览器启动、进程与线程",
+      "summary": "简化流程如下：",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/02-JS源码加载解析与执行.md",
+      "source": "roadmap/浏览器/gpt前端场景/02-JS源码加载解析与执行.md",
+      "slug": "roadmap-2e3faec9be65",
+      "title": "JS 源码加载、解析与执行",
+      "summary": "浏览器中的源码不一定直接来自磁盘，也可能来自网络或 HTTP 缓存。操作系统负责底层的文件和内存管理，浏览器运行时负责读取和交给 V8。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/03-堆栈垃圾回收与内存泄漏.md",
+      "source": "roadmap/浏览器/gpt前端场景/03-堆栈垃圾回收与内存泄漏.md",
+      "slug": "roadmap-4315478aee94",
+      "title": "堆、线程栈与垃圾回收",
+      "summary": "线程创建时会准备线程栈。函数调用时，栈上增加栈帧；函数返回时，栈帧通常被移除。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/04-事件循环与主线程.md",
+      "source": "roadmap/浏览器/gpt前端场景/04-事件循环与主线程.md",
+      "slug": "roadmap-e6a73927be0f",
+      "title": "事件循环、调用栈与主线程",
+      "summary": "浏览器主线程既要执行 JavaScript，也要参与样式计算、布局、绘制和用户输入处理。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/05-热代码冷代码与JIT.md",
+      "source": "roadmap/浏览器/gpt前端场景/05-热代码冷代码与JIT.md",
+      "slug": "roadmap-6e5e2244b372",
+      "title": "热代码、冷代码与 JIT",
+      "summary": "V8 会根据运行时信息判断某个函数或循环是否“热”，例如调用次数、循环次数、类型反馈和分支行为。热点阈值不是一个固定、适用于所有版本的公开数字。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/06-虚拟内存与前端场景.md",
+      "source": "roadmap/浏览器/gpt前端场景/06-虚拟内存与前端场景.md",
+      "slug": "roadmap-23162e2c8ace",
+      "title": "虚拟内存与前端场景",
+      "summary": "每个进程都有自己的虚拟地址空间。操作系统在地图中安排代码、动态库、堆、内存映射区和线程栈，并设置读、写、执行权限。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/07-前端排查清单.md",
+      "source": "roadmap/浏览器/gpt前端场景/07-前端排查清单.md",
+      "slug": "roadmap-fcabad19c23a",
+      "title": "把浏览器原理用到排查中",
+      "summary": "看到 Maximum call stack size exceeded 时，优先检查递归终止条件、组件递归和监听器互相触发。",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/浏览器/gpt前端场景/README.md",
+      "source": "roadmap/浏览器/gpt前端场景/README.md",
+      "slug": "roadmap-d88b331e6f68",
+      "title": "浏览器原理与前端场景",
+      "summary": "建议按数字顺序阅读：",
+      "category": "浏览器",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/工作/暂时不知道叫什么/k8s.md",
+      "source": "roadmap/项目搭建必备/工作/暂时不知道叫什么/k8s.md",
+      "slug": "roadmap-713750a3bfee",
+      "title": "k8s",
+      "summary": "先给结论：这些配置“技术上能运行”，但当前登录方案不能作为真正的生产鉴权，而且 k8s-login-config.yaml 里的 CI 示例存在覆盖 .env.production 的风险。",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/工作/暂时不知道叫什么/ljx 老前端的项目搭建.md",
+      "source": "roadmap/项目搭建必备/工作/暂时不知道叫什么/ljx 老前端的项目搭建.md",
+      "slug": "roadmap-3207048f0851",
+      "title": "SPACE-BASED-VUE 项目搭建步骤",
+      "summary": "完成本文后，项目应具备以下能力：",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/工作/TS + Vue3 结构/01vitePress、Vue + ts 项目搭建.md",
+      "source": "roadmap/项目搭建必备/工作/TS + Vue3 结构/01vitePress、Vue + ts 项目搭建.md",
+      "slug": "roadmap-8010fb0477e9",
+      "title": "01vitePress、Vue + ts 项目搭建",
+      "summary": "推荐安装：",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/工作/TS + Vue3 结构/02搭建疑惑解决.md",
+      "source": "roadmap/项目搭建必备/工作/TS + Vue3 结构/02搭建疑惑解决.md",
+      "slug": "roadmap-9057be3ba814",
+      "title": "02搭建疑惑解决",
+      "summary": "因为 Vite/VitePress 会通过 esbuild 把 .ts 文件转换成 JavaScript，所以：",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/工作/TS + Vue3 结构/03TS 内置工具类型.md",
+      "source": "roadmap/项目搭建必备/工作/TS + Vue3 结构/03TS 内置工具类型.md",
+      "slug": "roadmap-269c891fc8f9",
+      "title": "03TS 内置工具类型",
+      "summary": "",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/工作/TS + Vue3 结构/TS 实战技巧.md",
+      "source": "roadmap/项目搭建必备/工作/TS + Vue3 结构/TS 实战技巧.md",
+      "slug": "roadmap-a06732d5247e",
+      "title": "TS 实战技巧",
+      "summary": "比如 createRouter，你要在此基础上自己写一个 基于第三方库的方法时，",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/blog/总结jiangxu.md",
+      "source": "roadmap/项目搭建必备/blog/总结jiangxu.md",
+      "slug": "roadmap-5d775b191749",
+      "title": "总结jiangxu",
+      "summary": "notes.jiangxu.net 更准确地说是一套开源的个人技术知识库，而不是传统按时间发布文章的博客。",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/项目搭建必备/blog/css 调性提示词.md",
+      "source": "roadmap/项目搭建必备/blog/css 调性提示词.md",
+      "slug": "roadmap-f16aa91aea2a",
+      "title": "css 调性提示词",
+      "summary": "你是一名资深产品设计师、品牌设计师和前端工程师。",
+      "category": "CSS",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/闭包.md",
+      "source": "roadmap/知识点/进阶/闭包.md",
+      "slug": "roadmap-138a979c4cdb",
+      "title": "闭包",
+      "summary": "前端闭包的5大实际应用场景盘点了闭包 5 大核心应用：模块化封装、状态维持、防抖节流、函数柯里化及框架开发，附实战代码适 - 掘金 #Defination",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/单元测试/单元测试Steps.md",
+      "source": "roadmap/知识点/进阶/单元测试/单元测试Steps.md",
+      "slug": "roadmap-4c7c0578a12d",
+      "title": "单元测试Steps",
+      "summary": "快速起步 | 指南 | Vitest",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/单元测试/Node 单元测试问题.md",
+      "source": "roadmap/知识点/进阶/单元测试/Node 单元测试问题.md",
+      "slug": "roadmap-4b3d7958fa39",
+      "title": "Node 单元测试问题",
+      "summary": "",
+      "category": "工程实践",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/服务端SSR/SSR VS SPA(pinia store 中有说这个）.md",
+      "source": "roadmap/知识点/进阶/服务端SSR/SSR VS SPA(pinia store 中有说这个）.md",
+      "slug": "roadmap-4312581b665c",
+      "title": "SSR VS SPA(pinia store 中有说这个）",
+      "summary": "浏览器下载 js，所有代码全部在浏览器运行。",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/⭐渲染机制gpt.md",
+      "source": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/⭐渲染机制gpt.md",
+      "slug": "roadmap-0a56788c0cc9",
+      "title": "Vue2 / Vue3：从模板编译到 render、响应式、VNode 与真实 DOM",
+      "summary": "这份笔记把前面讨论的内容合并成一条完整链路，并逐个解释每个角色。",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue2渲染机制.md",
+      "source": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue2渲染机制.md",
+      "slug": "roadmap-3a878a07556f",
+      "title": "Vue 2 渲染机制：从初始化到视图更新",
+      "summary": "Vue 2 的核心链路可以先记成：",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue3 从构建阶段到首次渲染和更新阶段.md",
+      "source": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue3 从构建阶段到首次渲染和更新阶段.md",
+      "slug": "roadmap-5e8033ec43ba",
+      "title": "Vue3 从构建阶段到首次渲染和更新阶段",
+      "summary": "Vue 的流程可以分成三个阶段：",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue3渲染机制-源码版.md",
+      "source": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue3渲染机制-源码版.md",
+      "slug": "roadmap-ea55f6e8213e",
+      "title": "Vue 3 渲染机制：源码调用链版",
+      "summary": "runtime-core 不直接写死 document.createElement，而是接收 runtime-dom 提供的 nodeOps 和 patchProp。这使 Vue 3 可以支持自定义 renderer。",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue3渲染机制.md",
+      "source": "roadmap/知识点/进阶/更加具体的响应式/渲染机制/Vue3渲染机制.md",
+      "slug": "roadmap-85ed5c013f59",
+      "title": "Vue 3 渲染机制：先理解页面为什么会变化",
+      "summary": "读完后，能够回答四个问题：",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/更加具体的响应式/应用+说明.md",
+      "source": "roadmap/知识点/进阶/更加具体的响应式/应用+说明.md",
+      "slug": "roadmap-0d03cd159223",
+      "title": "应用+说明",
+      "summary": "这里 messageList 的 push 是响应式的 assistantMessage 不是拷贝，而是指向数组内部响应式对象的指针",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/继承式、组合式/继承式is-a、组合式has-a.md",
+      "source": "roadmap/知识点/进阶/继承式、组合式/继承式is-a、组合式has-a.md",
+      "slug": "roadmap-a073fca54954",
+      "title": "继承式is-a、组合式has-a",
+      "summary": "但如果只是为了复用几个方法，使用继承往往会造成耦合 mixin：多个类都需要同一组横向能力；",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/继承式、组合式/类、继承、实现、混入.md",
+      "source": "roadmap/知识点/进阶/继承式、组合式/类、继承、实现、混入.md",
+      "slug": "roadmap-84a13fd857a4",
+      "title": "类、继承、实现、混入",
+      "summary": "P.S. 抽象类会编译成真实 JS 类，JS 产物是存在的；interface 编译后直接消失。",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/虚拟滚动/分页虚拟滚动.md",
+      "source": "roadmap/知识点/进阶/虚拟滚动/分页虚拟滚动.md",
+      "slug": "roadmap-082b3a211729",
+      "title": "分页虚拟滚动",
+      "summary": "分页加载与虚拟滚动配合使用时需要考虑：",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/Promise手撕/Promise 手撕示例代码.md",
+      "source": "roadmap/知识点/进阶/Promise手撕/Promise 手撕示例代码.md",
+      "slug": "roadmap-b277e45cc7d9",
+      "title": "Promise 手撕示例代码",
+      "summary": "",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/Promise手撕/Promise 手撕思路.md",
+      "source": "roadmap/知识点/进阶/Promise手撕/Promise 手撕思路.md",
+      "slug": "roadmap-656b0bad90fb",
+      "title": "Promise 手撕思路",
+      "summary": "创建 p2 时",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/Promise手撕/Promise 手撕源码.md",
+      "source": "roadmap/知识点/进阶/Promise手撕/Promise 手撕源码.md",
+      "slug": "roadmap-e57d371171e6",
+      "title": "Promise 手撕源码",
+      "summary": "",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/SSE/手搓注意事项.md",
+      "source": "roadmap/知识点/进阶/SSE/手搓注意事项.md",
+      "slug": "roadmap-4e010a12f84d",
+      "title": "手搓注意事项",
+      "summary": "data:data: {\"choices\":[{\"delta\":{\"content\":null,\"reasoning_content\":\"嗯\",\"role\":\"assistant\"},\"finish_reason\":null,\"index\":0,\"logprobs\":null}],\"object\":",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/SSE/AbortSignal.md",
+      "source": "roadmap/知识点/进阶/SSE/AbortSignal.md",
+      "slug": "roadmap-124af1636939",
+      "title": "AbortSignal",
+      "summary": "https://developer.mozilla.org/zh-CN/docs/Web/API/AbortSignal",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/SSE/SSE 部分代码.md",
+      "source": "roadmap/知识点/进阶/SSE/SSE 部分代码.md",
+      "slug": "roadmap-4fcdccf15727",
+      "title": "SSE 部分代码",
+      "summary": "",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/进阶/SSE/SSE.md",
+      "source": "roadmap/知识点/进阶/SSE/SSE.md",
+      "slug": "roadmap-8a8fddf11d3d",
+      "title": "理解 SSE",
+      "summary": "没打字效果的版本👇 https://blog.csdn.net/meilindehuzi_a/article/details/163000680?fromshare=blogdetail&sharetype=blogdetail&sharerId=163000680&sharerefer=PC&s",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/基础八条规范.md",
+      "source": "roadmap/知识点/base/基础八条规范.md",
+      "slug": "roadmap-e1ef120c8405",
+      "title": "基础八条规范",
+      "summary": "",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/基础中的基础.md",
+      "source": "roadmap/知识点/base/基础中的基础.md",
+      "slug": "roadmap-952c4684b03a",
+      "title": "基础中的基础",
+      "summary": "数组 ref, 对象一般 reactive why reactive 不能 [], 因为不能直接整体重新赋值",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/路由/路由base.md",
+      "source": "roadmap/知识点/base/路由/路由base.md",
+      "slug": "roadmap-46969f7b0a02",
+      "title": "路由base",
+      "summary": "query 路径传参记得 encodeURIComponent 然后 decodeURIComponent,",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/生命周期/组件卸载时机.md",
+      "source": "roadmap/知识点/base/生命周期/组件卸载时机.md",
+      "slug": "roadmap-05125c5de503",
+      "title": "组件卸载时机",
+      "summary": "",
+      "category": "Vue",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/数组方法常用.md",
+      "source": "roadmap/知识点/base/数组方法常用.md",
+      "slug": "roadmap-66b43d55f66b",
+      "title": "数组与对象常用方法",
+      "summary": "push 从数组尾部添加一个或多个元素，返回新长度；pop 删除并返回最后一个元素。两者都会改变原数组。",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/原型/原型 构造函数 原型链.md",
+      "source": "roadmap/知识点/base/原型/原型 构造函数 原型链.md",
+      "slug": "roadmap-5708d5a24e77",
+      "title": "原型 构造函数 原型链",
+      "summary": "⚪构造函数：普通函数 用 new 调用 → 它就扮演 构造函数 --- class function 声明的函数，开头大写都可以作为构造函数",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/base/promise/Promise 基础.md",
+      "source": "roadmap/知识点/base/promise/Promise 基础.md",
+      "slug": "roadmap-05685997b63d",
+      "title": "Promise 基础",
+      "summary": "",
+      "category": "JavaScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/css/布局.md",
+      "source": "roadmap/知识点/css/布局.md",
+      "slug": "roadmap-934ce3fa9a3c",
+      "title": "CSS 布局",
+      "summary": "position 我一般按参照物来记。 static 是默认文档流； relative 是相对自己原位置偏移； absolute 是相对最近的非 static 祖先元素定位； fixed 是相对视口定位，滚动时不动； sticky 则是到了指定阈值后产生吸顶效果。",
+      "category": "CSS",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/知识点/css/滚动条.md",
+      "source": "roadmap/知识点/css/滚动条.md",
+      "slug": "roadmap-49081b1e63fe",
+      "title": "滚动条",
+      "summary": "",
+      "category": "CSS",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/Node/资源.md",
+      "source": "roadmap/Node/资源.md",
+      "slug": "roadmap-57ff64b79233",
+      "title": "资源",
+      "summary": "技术博客，面试相关 https://www.inode.club/node/what.html#node-js-%E7%9A%84%E7%89%B9%E7%82%B9",
+      "category": "Node.js",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/Node/NodeJs 用处.md",
+      "source": "roadmap/Node/NodeJs 用处.md",
+      "slug": "roadmap-d8eb8a902c7b",
+      "title": "NodeJs 用处",
+      "summary": "Node.js 是一个基于 Chrome JavaScript 运行时建立的一个平台",
+      "category": "Node.js",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/他人整理/TS.md",
+      "source": "roadmap/TypeScript/他人整理/TS.md",
+      "slug": "roadmap-c1f374a1b143",
+      "title": "W09 - TypeScript 完全指南 🛡️",
+      "summary": "真实案例：Airbnb 引入 TS 后，38% 的生产事故被编译器提前发现。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/00-TypeScript基础目录.md",
+      "source": "roadmap/TypeScript/小满Zs/00-TypeScript基础目录.md",
+      "slug": "roadmap-22bd98fa52c1",
+      "title": "TypeScript 基础目录",
+      "summary": "✅TS 专属的类型语法（interface、type、类型注解、泛型、as 断言）编译全部擦除，运行时不存在。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/迭代器-生成器-gpt.md",
+      "source": "roadmap/TypeScript/小满Zs/迭代器-生成器-gpt.md",
+      "slug": "roadmap-4e2ca57521da",
+      "title": "迭代器与生成器学习笔记",
+      "summary": "对应示例：src/迭代器-生成器.ts",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/易混/构造函数类型.md",
+      "source": "roadmap/TypeScript/小满Zs/易混/构造函数类型.md",
+      "slug": "roadmap-df77277d0a00",
+      "title": "构造函数类型",
+      "summary": "这里的 App 表示实例类型，大概是：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/易混/declare 和 interface.md",
+      "source": "roadmap/TypeScript/小满Zs/易混/declare 和 interface.md",
+      "slug": "roadmap-d2d901fc2cc5",
+      "title": "declare 和 interface",
+      "summary": "因为 interface 只能在同一文件下声明才能合并，这里 declare 的目的就是进入同一 axios 模块",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/易混/JS运行时，TS编译时.md",
+      "source": "roadmap/TypeScript/小满Zs/易混/JS运行时，TS编译时.md",
+      "slug": "roadmap-ce8c0e749cd8",
+      "title": "JS运行时，TS编译时",
+      "summary": "",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/Mixins.md",
+      "source": "roadmap/TypeScript/小满Zs/Mixins.md",
+      "slug": "roadmap-bd4a4d7f4654",
+      "title": "Mixins",
+      "summary": "",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS1-ts启动.md",
+      "source": "roadmap/TypeScript/小满Zs/TS1-ts启动.md",
+      "slug": "roadmap-eb7c12e5486a",
+      "title": "TS1：TypeScript 安装、编译与运行",
+      "summary": "如果报错估计是版本不对，一条命令解决",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS2-ts启动-基本类型.md",
+      "source": "roadmap/TypeScript/小满Zs/TS2-ts启动-基本类型.md",
+      "slug": "roadmap-61bde6e10f69",
+      "title": "TS2：运行工具与基础类型",
+      "summary": "ts-node 可以在开发阶段直接运行 .ts 文件，省去手动执行“编译 TS → 运行 JS”两个命令的过程。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS3-Interface.md",
+      "source": "roadmap/TypeScript/小满Zs/TS3-Interface.md",
+      "slug": "roadmap-b25acf07728f",
+      "title": "TS3：Interface 接口",
+      "summary": "interface 用于规定对象应该具有什么结构，只参与类型检查，不会创建真实对象。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS4-数组和对象.md",
+      "source": "roadmap/TypeScript/小满Zs/TS4-数组和对象.md",
+      "slug": "roadmap-862727d87fc6",
+      "title": "TS4：数组、对象数组与元组",
+      "summary": "两种写法含义相同。简单类型通常使用 number[]，嵌套泛型较多时可以选择更容易阅读的写法。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS5-function.md",
+      "source": "roadmap/TypeScript/小满Zs/TS5-function.md",
+      "slug": "roadmap-4150582b28f4",
+      "title": "TS5：函数类型与对象方法",
+      "summary": "a: number 和 b: number 规定参数类型，函数括号后的 : number 规定返回值类型。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS6-函数重载.md",
+      "source": "roadmap/TypeScript/小满Zs/TS6-函数重载.md",
+      "slug": "roadmap-550e00c4b2e4",
+      "title": "TS6：函数重载",
+      "summary": "本例中的 findUser 有三种调用方式：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS7-联合类型-类型断言-交叉类型.md",
+      "source": "roadmap/TypeScript/小满Zs/TS7-联合类型-类型断言-交叉类型.md",
+      "slug": "roadmap-f3accec982b6",
+      "title": "TS7：联合类型、类型断言与交叉类型",
+      "summary": "这一篇的重点不只是记住三个符号，而是分清它们分别改变了什么：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS8-内置对象&代码雨.md",
+      "source": "roadmap/TypeScript/小满Zs/TS8-内置对象&代码雨.md",
+      "slug": "roadmap-4b7c9501be93",
+      "title": "TS8：内置对象与 Canvas 代码雨",
+      "summary": "本例把 TypeScript 与浏览器提供的对象结合起来：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS9-Class.md",
+      "source": "roadmap/TypeScript/小满Zs/TS9-Class.md",
+      "slug": "roadmap-1819bb06f82f",
+      "title": "TS9：Class、继承与简单的 Vue/Ref 模拟",
+      "summary": "el 支持两种值：CSS 选择器字符串，或已经获取到的 HTMLElement。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS10-abstract 抽象类.md",
+      "source": "roadmap/TypeScript/小满Zs/TS10-abstract 抽象类.md",
+      "slug": "roadmap-2b557228db0a",
+      "title": "TS10：abstract 抽象类",
+      "summary": "抽象类是用来描述一组子类共同结构的基类。它可以包含已经实现的属性、构造函数和普通方法，也可以声明必须由子类实现的抽象方法。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS11- 元组类型.md",
+      "source": "roadmap/TypeScript/小满Zs/TS11- 元组类型.md",
+      "slug": "roadmap-e86d04334443",
+      "title": "TS11：元组类型（Tuple）",
+      "summary": "元组是长度固定、每个位置类型可以不同的数组。它适合表达“位置有明确含义”的数据，例如坐标、键值对或固定表头的一行数据。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS12-enums枚举类型.md",
+      "source": "roadmap/TypeScript/小满Zs/TS12-enums枚举类型.md",
+      "slug": "roadmap-ddd834c0cd8c",
+      "title": "TS12：enum 枚举类型",
+      "summary": "枚举用于给一组有名字的常量建立集合。枚举成员既可以出现在类型位置，也可以在运行时作为值使用。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS13-类型推论-类型别名.md",
+      "source": "roadmap/TypeScript/小满Zs/TS13-类型推论-类型别名.md",
+      "slug": "roadmap-6ff405dc8463",
+      "title": "TS13：类型推论与类型别名",
+      "summary": "TypeScript 会根据变量的初始值、函数返回值和上下文，自动推断出更合适的类型。能推断清楚时，不必重复书写类型注解。",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS14-never.md",
+      "source": "roadmap/TypeScript/小满Zs/TS14-never.md",
+      "slug": "roadmap-6141f38499b7",
+      "title": "TS14：never 类型",
+      "summary": "never 表示永远不会正常产生值的类型。常见于：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS15-Symbol上.md",
+      "source": "roadmap/TypeScript/小满Zs/TS15-Symbol上.md",
+      "slug": "roadmap-c4497433fcf4",
+      "title": "TS15：Symbol（上）",
+      "summary": "Symbol 是 JavaScript 的原始类型，用来创建唯一且不可变的标识值。即使描述文字相同，每次调用 Symbol() 也会得到不同的值：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    },
+    {
+      "file": "roadmap/TypeScript/小满Zs/TS16-迭代器-生成器.md",
+      "source": "roadmap/TypeScript/小满Zs/TS16-迭代器-生成器.md",
+      "slug": "roadmap-2c04fa162d11",
+      "title": "TS16：迭代器与生成器",
+      "summary": "迭代器对象必须提供 next 方法。每次调用都返回一个结果对象：",
+      "category": "TypeScript",
+      "date": "2026.10.13"
+    }
+  ],
+  "empty": [
+    "知识点/base/原型/Vue.Prototype.xxx.md",
+    "知识点/base/composables/base.md"
+  ],
+  "assets": [
+    {
+      "source": "roadmap/知识点/进阶/单元测试/pinia-main写法js文件/index.js",
+      "url": "/note-assets/roadmap/%E7%9F%A5%E8%AF%86%E7%82%B9/%E8%BF%9B%E9%98%B6/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/pinia-main%E5%86%99%E6%B3%95js%E6%96%87%E4%BB%B6/index.js"
+    },
+    {
+      "source": "roadmap/知识点/进阶/单元测试/pinia-main写法js文件/main.js",
+      "url": "/note-assets/roadmap/%E7%9F%A5%E8%AF%86%E7%82%B9/%E8%BF%9B%E9%98%B6/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/pinia-main%E5%86%99%E6%B3%95js%E6%96%87%E4%BB%B6/main.js"
+    },
+    {
+      "source": "roadmap/知识点/进阶/Promise手撕/困惑-P1-P2-P3执行流程.svg",
+      "url": "/note-assets/roadmap/%E7%9F%A5%E8%AF%86%E7%82%B9/%E8%BF%9B%E9%98%B6/Promise%E6%89%8B%E6%92%95/%E5%9B%B0%E6%83%91-P1-P2-P3%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.svg"
+    },
+    {
+      "source": "roadmap/知识点/进阶/SSE/modelDialog.vue",
+      "url": "/note-assets/roadmap/%E7%9F%A5%E8%AF%86%E7%82%B9/%E8%BF%9B%E9%98%B6/SSE/modelDialog.vue"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260902171132.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260902171132.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260902182735.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260902182735.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260818150530.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260818150530.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260811162345.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260811162345.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260808202853.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260808202853.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260615181924.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260615181924.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260810152141.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260810152141.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260810160943.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260810160943.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260808210857.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260808210857.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260831174440.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260831174440.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260821174054.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260821174054.png"
+    },
+    {
+      "source": "roadmap/_attachments/Pasted image 20260819134934.png",
+      "url": "/note-assets/roadmap/_attachments/Pasted%20image%2020260819134934.png"
+    }
+  ],
+  "missingAssets": []
+}
