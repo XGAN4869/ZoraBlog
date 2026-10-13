@@ -14,6 +14,7 @@ test("home preserves the greeting and opens the filterable blog", async ({ page 
   await expect(page.locator(".hero-terminal-greeting")).toHaveAttribute("data-typing-complete", "true");
   await expect(page.locator(".hero-terminal-greeting")).toHaveText("Hi, Zora.");
   await expect(page.locator(".hero-terminal-output")).toHaveCSS("opacity", "1");
+  await expect(page.locator(".hero-terminal-output")).toHaveText("( ^_^ )/");
   await page.getByRole("link", { name: "探索文章", exact: true }).click();
   await expect(page).toHaveURL("/blog");
   await page.getByRole("tab", { name: "TypeScript", exact: true }).click();

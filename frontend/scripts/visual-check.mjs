@@ -11,6 +11,7 @@ try {
   for (const [name, viewport, theme] of [
     ["desktop-dark", { width: 1920, height: 1080 }, "dark"],
     ["desktop-light", { width: 1440, height: 1000 }, "light"],
+    ["compact-dark", { width: 769, height: 472 }, "dark"],
     ["mobile-dark", { width: 390, height: 844 }, "dark"],
     ["mobile-light", { width: 390, height: 844 }, "light"],
   ]) {

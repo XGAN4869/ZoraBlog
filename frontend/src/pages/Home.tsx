@@ -51,7 +51,7 @@ export function Home() {
               Hi, Zora.
             </TypingAnimation>
             <AnimatedSpan className="hero-terminal-output">
-              <p>写代码，也写下思考</p>
+              <p>( ^_^ )/</p>
             </AnimatedSpan>
           </Terminal>
           <div className="hero-buttons">
