@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -9,42 +11,57 @@ import (
 
 // 上下文里存用户信息的 key，统一常量，避免拼错
 const (
-	CtxUserID   = "userID"
-	CtxUsername = "username"
+	SessionCookie = "zora_session"
+	CtxUserID     = "userID"
+	CtxUsername   = "username"
 )
+
+var ErrInvalidSession = errors.New("登录状态已失效，请重新登录")
+
+func RequestToken(c *gin.Context) (string, error) {
+	if header := c.GetHeader("Authorization"); header != "" {
+		parts := strings.Fields(header)
+		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+			return "", ErrInvalidSession
+		}
+		return parts[1], nil
+	}
+	token, err := c.Cookie(SessionCookie)
+	if errors.Is(err, http.ErrNoCookie) {
+		return "", nil
+	}
+	return token, err
+}
 
 // Auth 返回一个 JWT 认证中间件
 // 校验请求头 Authorization: Bearer <token>
-func Auth() gin.HandlerFunc {
+func Auth(validate func(context.Context, string, uint) error) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 1. 取 Authorization 头
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
+		tokenString, err := RequestToken(c)
+		if err != nil || tokenString == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
-				"message": "缺少 Authorization 请求头",
+				"message": "请先登录",
 			})
 			return
 		}
-
-		// 2. 必须是 "Bearer xxx" 格式
-		parts := strings.SplitN(authHeader, " ", 2)
-		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"code":    401,
-				"message": "Authorization 格式错误，应为 Bearer <token>",
-			})
-			return
-		}
-		tokenString := parts[1]
 
 		// 3. 解析并校验 token（这里用 JWT 示例）
 		claims, err := ParseToken(tokenString)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"code":    401,
-				"message": "token 无效或已过期：" + err.Error(),
+				"message": ErrInvalidSession.Error(),
 			})
+			return
+		}
+		if err = validate(c.Request.Context(), tokenString, claims.UserID); err != nil {
+			if errors.Is(err, ErrInvalidSession) {
+				c.AbortWithStatusJSON(401, gin.H{"code": 401, "message": ErrInvalidSession.Error()})
+			} else {
+				c.AbortWithStatusJSON(503, gin.H{"code": 503, "message": "认证服务暂时不可用，请稍后重试"})
+			}
 			return
 		}
 

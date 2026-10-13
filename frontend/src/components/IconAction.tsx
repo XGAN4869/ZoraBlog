@@ -10,10 +10,12 @@ export function IconAction({
   label,
   onClick,
   children,
+  disabled = false,
 }: {
   label: string;
   onClick: () => void;
   children: ReactNode;
+  disabled?: boolean;
 }) {
   return (
     <Tooltip>
@@ -24,6 +26,7 @@ export function IconAction({
           size="icon"
           aria-label={label}
           onClick={onClick}
+          disabled={disabled}
         >
           {children}
         </Button>

@@ -1,5 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/session", (route) => route.fulfill({ json: { code: 0, data: { user: null } } }));
+});
+
 async function openRoom(page: Page) {
   await page.goto("/#room");
   await expect.poll(() => page.locator(".home-page").evaluate((element) => element.scrollTop)).toBe(await page.evaluate(() => innerHeight));

@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/session", (route) => route.fulfill({ json: { code: 0, data: { user: null } } }));
+});
+
 test("home preserves the greeting and opens the filterable blog", async ({ page }) => {
   await page.goto("/");
   await expect(
@@ -43,21 +47,19 @@ test("theme persists and mobile layout stays in viewport", async ({ page }) => {
   await expect(page).toHaveURL("/login");
 });
 
-test("preview login validates and never persists credentials", async ({
+test("login validates required fields and never persists credentials", async ({
   page,
 }) => {
   await page.goto("/login");
-  await page.getByRole("button", { name: "预览登录" }).click();
-  await expect(page.getByText("请输入有效的邮箱地址")).toBeVisible();
-  await page.getByLabel("邮箱地址").fill("zora@example.com");
+  await page.getByRole("button", { name: "登录", exact: true }).click();
+  await expect(page.getByText("请输入用户名或邮箱")).toBeVisible();
+  await page.getByLabel("用户名或邮箱").fill("zora@example.com");
   await page.getByLabel("密码", { exact: true }).fill("demo-password");
   await page.getByRole("button", { name: "显示密码" }).click();
   await expect(page.getByLabel("密码", { exact: true })).toHaveAttribute(
     "type",
     "text",
   );
-  await page.getByRole("button", { name: "预览登录" }).click();
-  await expect(page.getByText("前端预览成功")).toBeVisible();
   expect(
     await page.evaluate(() =>
       JSON.stringify({ ...localStorage, ...sessionStorage }),

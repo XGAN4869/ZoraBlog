@@ -1,6 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ArrowUpRight, BookOpen, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { ArrowUpRight, BookOpen, LogOut, Menu, Moon, Search, Sun, UserRound, X } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +55,15 @@ function Header({ onSearch }: { onSearch: () => void }) {
   const { resolvedTheme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
+  async function handleLogout() {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try { await logout(); toast.success("已退出登录"); }
+    catch (error) { toast.error(error instanceof Error ? error.message : "退出失败，请稍后重试"); }
+    finally { setLoggingOut(false); }
+  }
   const light = resolvedTheme === "light";
   return (
     <header className="site-header">
@@ -76,12 +87,19 @@ function Header({ onSearch }: { onSearch: () => void }) {
         >
           {light ? <Moon /> : <Sun />}
         </IconAction>
-        <Button asChild className="header-login">
+        {user ? <DropdownMenu>
+          <DropdownMenuTrigger asChild><button type="button" className="header-account" aria-label={`账户：${user.username}`}><UserRound size={16} /><span>{user.username}</span></button></DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="account-menu">
+            <DropdownMenuLabel className="account-menu-label">{user.username}<small>{user.email}</small></DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}><LogOut />{loggingOut ? "正在退出" : "退出登录"}</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu> : <Button asChild className="header-login">
           <Link to="/login">
             登录
             <ArrowUpRight />
           </Link>
-        </Button>
+        </Button>}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -123,9 +141,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
                 {item.label}
               </DropdownMenuItem>
             ))}
-            <DropdownMenuItem onSelect={() => navigate("/login")}>
-              登录
-            </DropdownMenuItem>
+            {user ? <><DropdownMenuSeparator /><DropdownMenuLabel>{user.username}</DropdownMenuLabel><DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}>退出登录</DropdownMenuItem></> : <><DropdownMenuItem onSelect={() => navigate("/login")}>登录</DropdownMenuItem><DropdownMenuItem onSelect={() => navigate("/register")}>注册账号</DropdownMenuItem></>}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -241,6 +257,8 @@ export function Site({ children }: { children: ReactNode }) {
     document.title =
       location.pathname === "/login"
         ? "登录 · Hi Zora"
+        : location.pathname === "/register"
+          ? "注册 · Hi Zora"
         : location.pathname === "/blog"
           ? "博客 · Hi Zora"
         : location.pathname.startsWith("/articles/")

@@ -23,6 +23,7 @@ try {
       (value) => localStorage.setItem("zora-theme", value),
       theme,
     );
+    await page.route("**/api/session", (route) => route.fulfill({ json: { code: 0, data: { user: null } } }));
     for (const [routeName, route] of [
       ["home", "/"],
       ["blog", "/blog"],

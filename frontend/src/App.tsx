@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MotionConfig } from "motion/react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/components/auth-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Site } from "@/layouts/Site";
 import { Home } from "@/pages/Home";
@@ -13,6 +14,7 @@ import "./App.css";
 export default function App() {
   return (
     <ThemeProvider>
+      <AuthProvider>
       <MotionConfig reducedMotion="user">
         <TooltipProvider delayDuration={250}>
           <BrowserRouter>
@@ -20,7 +22,8 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/blog" element={<Blog />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login key="login" />} />
+                <Route path="/register" element={<Login key="register" mode="register" />} />
                 <Route path="/articles/:slug" element={<ArticlePage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
@@ -28,6 +31,7 @@ export default function App() {
           </BrowserRouter>
         </TooltipProvider>
       </MotionConfig>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
