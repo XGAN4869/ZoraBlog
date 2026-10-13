@@ -1,19 +1,20 @@
-import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import { animate, motion, useDragControls, useMotionValue, useReducedMotion } from "motion/react";
-import { ArrowRight, ArrowUp, ArrowUpRight, BookOpen, Code2 } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 type ObjectProps = {
   id: "blog" | "projects" | "about";
   label: string;
   index: number;
-  children: ReactNode;
+  title: string;
+  description: string;
   to?: string;
   onDragChange: (dragging: boolean) => void;
 };
 
-function RoomObject({ id, label, index, children, to, onDragChange }: ObjectProps) {
+function RoomObject({ id, label, index, title, description, to, onDragChange }: ObjectProps) {
   const boundsRef = useRef<HTMLDivElement>(null);
   const draggedRef = useRef(false);
   const controls = useDragControls();
@@ -58,11 +59,18 @@ function RoomObject({ id, label, index, children, to, onDragChange }: ObjectProp
     }
   }
 
+  const copy = (
+    <span className="studio-module-copy">
+      <span className="studio-module-title" role="heading" aria-level={3}>{title}</span>
+      <span className="studio-module-description">{description}</span>
+    </span>
+  );
+
   const surface = to ? (
-    <Link to={to} className="studio-surface" draggable={false} aria-label={label} onClick={suppressDragClick}>{children}</Link>
+    <Link to={to} className="studio-surface" draggable={false} aria-label={label} onClick={suppressDragClick}>{copy}</Link>
   ) : (
     <DialogTrigger asChild>
-      <button type="button" className="studio-surface" aria-label={label} onClick={suppressDragClick}>{children}</button>
+      <button type="button" className="studio-surface" aria-label={label} onClick={suppressDragClick}>{copy}</button>
     </DialogTrigger>
   );
 
@@ -107,31 +115,18 @@ export function ZoraRoom({ onDragChange }: { onDragChange: (dragging: boolean) =
         </div>
         <div className="studio-stage" aria-label="房间里的三个模块">
           <div className="studio-board">
-          <RoomObject id="blog" label="进入博客" index={0} to="/blog" onDragChange={onDragChange}>
-            <span className="object-topline"><BookOpen size={16} /><ArrowUpRight size={18} /></span>
-            <span className="blog-sculpture" aria-hidden="true"><i /><i /><i /><BookOpen size={42} strokeWidth={1.2} /></span>
-            <span className="object-copy"><strong>Blog<span>.</span></strong><span>记录技术，也收藏灵感。</span></span>
-            <span className="object-bottomline"><span>探索文章</span><ArrowRight size={17} /></span>
-          </RoomObject>
+          <RoomObject id="blog" label="进入博客" title="Blog" description="记录技术，也收藏灵感。" index={0} to="/blog" onDragChange={onDragChange} />
           <Dialog>
-            <RoomObject id="projects" label="查看项目" index={1} onDragChange={onDragChange}>
-              <span className="object-topline"><Code2 size={16} /><ArrowUpRight size={16} /></span>
-              <span className="project-art" aria-hidden="true"><span><i /><i /><i /></span><i /><i /><i /></span>
-              <span className="object-copy"><strong>Projects<span>.</span></strong><span>慢慢把想法做出来。</span></span>
-            </RoomObject>
+            <RoomObject id="projects" label="查看项目" title="Projects" description="慢慢把想法做出来。" index={1} onDragChange={onDragChange} />
             <DialogContent className="studio-dialog">
               <DialogHeader><DialogTitle>想法的落点</DialogTitle><DialogDescription>已有项目的记录与开发实践。</DialogDescription></DialogHeader>
-              <Link to="/articles/vue-composable-state" className="studio-project-link"><Code2 /><span><strong>Vite Ku Zora</strong><small>组件与组合式函数的个人工具箱 · Vue / VitePress</small></span><ArrowUpRight size={18} /></Link>
-              <Link to="/articles/frontend-project-structure" className="studio-project-link"><BookOpen /><span><strong>Hi Zora Blog</strong><small>关于技术、表达与持续成长的个人空间 · React / TypeScript</small></span><ArrowUpRight size={18} /></Link>
+              <Link to="/articles/vue-composable-state" className="studio-project-link"><span><strong>Vite Ku Zora</strong><small>组件与组合式函数的个人工具箱 · Vue / VitePress</small></span></Link>
+              <Link to="/articles/frontend-project-structure" className="studio-project-link"><span><strong>Hi Zora Blog</strong><small>关于技术、表达与持续成长的个人空间 · React / TypeScript</small></span></Link>
               <p className="studio-dialog-note">点击阅读相关实践。独立项目展示页暂未提供。</p>
             </DialogContent>
           </Dialog>
           <Dialog>
-            <RoomObject id="about" label="认识 Zora" index={2} onDragChange={onDragChange}>
-              <span className="object-topline"><ArrowUpRight size={16} /></span>
-              <span className="about-object-main"><span className="studio-avatar">z<span>.</span></span><span><strong>Zora</strong><small>Front-end Developer</small></span></span>
-              <span className="about-object-note">保持好奇，认真创造。</span>
-            </RoomObject>
+            <RoomObject id="about" label="认识 Zora" title="About" description="Zora · Front-end Developer" index={2} onDragChange={onDragChange} />
             <DialogContent className="studio-dialog">
               <DialogHeader><DialogTitle>Hi, 我是 Zora。</DialogTitle><DialogDescription>一名前端开发工程师，喜欢清晰的代码，也喜欢有温度的设计。</DialogDescription></DialogHeader>
               <p>这里是我的知识记录，也是持续学习、分享和创造的地方。</p>
