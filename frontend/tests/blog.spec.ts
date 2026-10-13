@@ -14,7 +14,8 @@ test("home preserves the greeting and opens the filterable blog", async ({ page 
   await expect(page.locator(".hero-terminal-greeting")).toHaveAttribute("data-typing-complete", "true");
   await expect(page.locator(".hero-terminal-greeting")).toHaveText("Hi, Zora.");
   await expect(page.locator(".hero-terminal-output")).toHaveCSS("opacity", "1");
-  await expect(page.locator(".hero-terminal-output")).toHaveText("( ^_^ )/");
+  await expect(page.locator(".hero-terminal-output")).toHaveText("Here to explore your world, one moment at a time.");
+  await expect(page.locator(".hero-terminal-output")).toHaveAttribute("data-typing-complete", "true");
   await page.getByRole("link", { name: "探索文章", exact: true }).click();
   await expect(page).toHaveURL("/blog");
   await page.getByRole("tab", { name: "TypeScript", exact: true }).click();
@@ -42,7 +43,10 @@ test("terminal respects reduced motion and fits compact screens", async ({ page 
     const greeting = page.getByRole("heading", { name: "Hi, Zora." });
     await expect(greeting).toHaveText("Hi, Zora.");
     await expect(page.locator(".hero-terminal-output")).toHaveCSS("opacity", "1");
-    await expect(page.locator(".hero-terminal .terminal-cursor")).toHaveCSS("animation-name", "none");
+    await expect(page.locator(".hero-terminal-output")).toHaveText("Here to explore your world, one moment at a time.");
+    for (const cursor of await page.locator(".hero-terminal .terminal-cursor").all()) {
+      await expect(cursor).toHaveCSS("animation-name", "none");
+    }
     await expect(page.getByRole("link", { name: "探索文章", exact: true })).toBeInViewport({ ratio: 1 });
     const terminal = await page.locator(".hero-terminal").boundingBox();
     expect(terminal!.y).toBeGreaterThanOrEqual(await page.locator(".site-header").evaluate((element) => element.clientHeight));

@@ -5,7 +5,7 @@ import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui/button";
 import { InteractiveHoverButton } from "@/registry/magicui/interactive-hover-button";
-import { AnimatedSpan, Terminal, TypingAnimation } from "@/registry/magicui/terminal";
+import { Terminal, TypingAnimation } from "@/registry/magicui/terminal";
 import { ShapeGrid } from "@/components/ShapeGrid";
 import { ZoraRoom } from "@/components/ZoraRoom";
 import "./Home.css";
@@ -50,9 +50,9 @@ export function Home() {
             <TypingAnimation as="h1" duration={85} className="hero-terminal-greeting">
               Hi, Zora.
             </TypingAnimation>
-            <AnimatedSpan className="hero-terminal-output">
-              <p>( ^_^ )/</p>
-            </AnimatedSpan>
+            <TypingAnimation as="p" duration={35} className="hero-terminal-output">
+              Here to explore your world, one moment at a time.
+            </TypingAnimation>
           </Terminal>
           <div className="hero-buttons">
             <InteractiveHoverButton asChild className="w-[136px] md:w-40">

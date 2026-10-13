@@ -17,7 +17,7 @@
 
 ## 首页 Terminal
 
-首屏使用 Magic UI Terminal 的本地适配组件，标题和输出均沿用 `--mono` 的 JetBrains Mono Variable。`Hi, Zora.` 复用标题规格：桌面 32px / 40px，手机 28px / 36px，字重 600，字距 -0.02em。第二行只输出颜文字 `( ^_^ )/`，复用正文规格 16px / 24px，字重 400，以颜色和字号区分主次。终端标题保持完整的可访问名称，视觉文字逐字显示；减少动态效果模式下直接显示全部内容并停用光标闪烁。
+首屏使用 Magic UI Terminal 的本地适配组件，标题和输出均沿用 `--mono` 的 JetBrains Mono Variable。`Hi, Zora.` 复用标题规格：桌面 32px / 40px，手机 28px / 36px，字重 600，字距 -0.02em。第二行输出 `Here to explore your world, one moment at a time.`，复用正文规格 16px / 24px，字重 400，以颜色和字号区分主次。标题完成后，第二行按每字符 35ms 逐字打印；手机预留三行高度以避免打字时布局跳动。终端标题保持完整的可访问名称；减少动态效果模式下直接显示全部内容并停用光标闪烁。
 
 ## 首页圆角
 
