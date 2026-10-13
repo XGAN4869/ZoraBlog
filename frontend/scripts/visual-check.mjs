@@ -31,7 +31,6 @@ try {
     for (const [routeName, route] of [
       ["home", "/"],
       ["blog", "/blog"],
-      ["login", "/login"],
       ["article", "/articles/react-component-boundaries"],
       ["markdown", "/articles/go-routing"],
       ["obsidian", "/articles/ui-components-theme"],
@@ -71,7 +70,7 @@ try {
         await page.screenshot({ path: `test-results/visual/${name}-room.png` });
         await page.locator(".home-page").evaluate((element) => element.scrollTo({ top: 0, behavior: "instant" }));
       }
-      if (routeName !== "home" && routeName !== "login") {
+      if (routeName !== "home") {
         assert(await page.locator(".article-card").count() === 0, `${name}/${routeName}: removed article cards`);
         await page.locator(".article-pagination").waitFor();
       }
@@ -96,7 +95,7 @@ try {
       });
     }
     await page.close();
-    console.log(`${name}: home, room, blog, login, article and Markdown notes verified`);
+    console.log(`${name}: home, room, blog, article and Markdown notes verified`);
   }
   assert.deepEqual(failures, [], "Browser console errors");
 } finally {

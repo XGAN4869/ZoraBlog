@@ -4,29 +4,40 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
 
 var ErrUserNotFound = errors.New("user not found")
-var ErrDuplicateUser = errors.New("username or email already exists")
+var ErrOAuthState = errors.New("OAuth 请求已过期或已使用")
 
 type User struct {
-	ID           uint   `json:"id"`
-	Username     string `json:"username"`
-	Email        string `json:"email"`
-	PasswordHash []byte `json:"-"`
+	ID       uint
+	Username string
+	Email    string
+}
+
+type GitHubUser struct {
+	ID    int64
+	Login string
+	Email string
+}
+
+type OAuthLogin struct {
+	CodeVerifier string
+	Remember     bool
+	ReturnTo     string
+	ExpiresAt    time.Time
 }
 
 type AuthStore interface {
-	CreateUser(context.Context, string, string, []byte) (*User, error)
-	FindUser(context.Context, string) (*User, error)
-	UserByID(context.Context, uint) (*User, error)
+	UpsertGitHubUser(context.Context, GitHubUser) (*User, error)
 	CreateSession(context.Context, string, uint, time.Time) error
-	SessionValid(context.Context, string, uint, time.Time) (bool, error)
+	SessionUser(context.Context, string, time.Time) (*User, error)
 	DeleteSession(context.Context, string) error
+	CreateOAuthLogin(context.Context, string, OAuthLogin) error
+	ConsumeOAuthLogin(context.Context, string, time.Time) (*OAuthLogin, error)
 }
 
 type MySQLStore struct{ db *sql.DB }
@@ -67,22 +78,30 @@ func OpenMySQL(ctx context.Context, dsn string) (*MySQLStore, error) {
 
 func (s *MySQLStore) Close() error { return s.db.Close() }
 
+// 独立的 OAuth 表保留原有密码账户数据，不按用户名或邮箱自动关联账户。
 func (s *MySQLStore) migrate(ctx context.Context) error {
 	queries := []string{
-		`CREATE TABLE IF NOT EXISTS auth_users (
+		`CREATE TABLE IF NOT EXISTS oauth_users (
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-			username VARCHAR(20) NOT NULL,
-			username_key VARCHAR(20) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL UNIQUE,
-			email VARCHAR(254) NOT NULL UNIQUE,
-			password_hash VARBINARY(72) NOT NULL,
+			github_id BIGINT NOT NULL UNIQUE,
+			username VARCHAR(39) NOT NULL,
+			email VARCHAR(254) NOT NULL DEFAULT '',
 			created_at DATETIME(6) NOT NULL
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
-		`CREATE TABLE IF NOT EXISTS auth_sessions (
+		`CREATE TABLE IF NOT EXISTS oauth_sessions (
 			token_hash CHAR(64) CHARACTER SET ascii NOT NULL PRIMARY KEY,
 			user_id BIGINT UNSIGNED NOT NULL,
 			expires_at DATETIME(6) NOT NULL,
-			INDEX auth_sessions_expiry (expires_at),
-			FOREIGN KEY (user_id) REFERENCES auth_users(id) ON DELETE CASCADE
+			INDEX oauth_sessions_expiry (expires_at),
+			FOREIGN KEY (user_id) REFERENCES oauth_users(id) ON DELETE CASCADE
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+		`CREATE TABLE IF NOT EXISTS oauth_login_requests (
+			state_hash CHAR(64) CHARACTER SET ascii NOT NULL PRIMARY KEY,
+			code_verifier VARCHAR(43) CHARACTER SET ascii NOT NULL,
+			remember BOOLEAN NOT NULL,
+			return_to VARCHAR(2048) NOT NULL,
+			expires_at DATETIME(6) NOT NULL,
+			INDEX oauth_login_expiry (expires_at)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 	}
 	for _, query := range queries {
@@ -93,52 +112,74 @@ func (s *MySQLStore) migrate(ctx context.Context) error {
 	return nil
 }
 
-func (s *MySQLStore) CreateUser(ctx context.Context, username, email string, hash []byte) (*User, error) {
-	result, err := s.db.ExecContext(ctx, `INSERT INTO auth_users (username, username_key, email, password_hash, created_at) VALUES (?, ?, ?, ?, ?)`, username, strings.ToLower(username), email, hash, time.Now().UTC())
+func (s *MySQLStore) UpsertGitHubUser(ctx context.Context, profile GitHubUser) (*User, error) {
+	result, err := s.db.ExecContext(ctx, `INSERT INTO oauth_users (github_id, username, email, created_at)
+		VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id), username=VALUES(username), email=VALUES(email)`,
+		profile.ID, profile.Login, profile.Email, time.Now().UTC())
 	if err != nil {
-		var duplicate *mysql.MySQLError
-		if errors.As(err, &duplicate) && duplicate.Number == 1062 {
-			return nil, ErrDuplicateUser
-		}
 		return nil, err
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
 		return nil, err
 	}
-	return &User{ID: uint(id), Username: username, Email: email, PasswordHash: hash}, nil
+	return &User{ID: uint(id), Username: profile.Login, Email: profile.Email}, nil
 }
 
-func scanUser(row *sql.Row) (*User, error) {
-	user := &User{}
-	if err := row.Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrUserNotFound
-		}
-		return nil, err
-	}
-	return user, nil
-}
-
-func (s *MySQLStore) FindUser(ctx context.Context, identifier string) (*User, error) {
-	return scanUser(s.db.QueryRowContext(ctx, `SELECT id, username, email, password_hash FROM auth_users WHERE username_key = ? OR email = ? LIMIT 1`, identifier, identifier))
-}
-func (s *MySQLStore) UserByID(ctx context.Context, id uint) (*User, error) {
-	return scanUser(s.db.QueryRowContext(ctx, `SELECT id, username, email, password_hash FROM auth_users WHERE id = ?`, id))
-}
 func (s *MySQLStore) CreateSession(ctx context.Context, hash string, userID uint, expires time.Time) error {
-	if _, err := s.db.ExecContext(ctx, `DELETE FROM auth_sessions WHERE expires_at <= ?`, time.Now().UTC()); err != nil {
+	if _, err := s.db.ExecContext(ctx, `DELETE FROM oauth_sessions WHERE expires_at <= ?`, time.Now().UTC()); err != nil {
 		return err
 	}
-	_, err := s.db.ExecContext(ctx, `INSERT INTO auth_sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)`, hash, userID, expires.UTC())
+	_, err := s.db.ExecContext(ctx, `INSERT INTO oauth_sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)`, hash, userID, expires.UTC())
 	return err
 }
-func (s *MySQLStore) SessionValid(ctx context.Context, hash string, userID uint, now time.Time) (bool, error) {
-	var valid bool
-	err := s.db.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM auth_sessions WHERE token_hash = ? AND user_id = ? AND expires_at > ?)`, hash, userID, now.UTC()).Scan(&valid)
-	return valid, err
+
+func (s *MySQLStore) SessionUser(ctx context.Context, hash string, now time.Time) (*User, error) {
+	user := &User{}
+	err := s.db.QueryRowContext(ctx, `SELECT u.id, u.username, u.email FROM oauth_sessions s
+		JOIN oauth_users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?`, hash, now.UTC()).Scan(&user.ID, &user.Username, &user.Email)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrUserNotFound
+	}
+	return user, err
 }
+
 func (s *MySQLStore) DeleteSession(ctx context.Context, hash string) error {
-	_, err := s.db.ExecContext(ctx, `DELETE FROM auth_sessions WHERE token_hash = ?`, hash)
+	_, err := s.db.ExecContext(ctx, `DELETE FROM oauth_sessions WHERE token_hash=?`, hash)
 	return err
+}
+
+func (s *MySQLStore) CreateOAuthLogin(ctx context.Context, hash string, login OAuthLogin) error {
+	if _, err := s.db.ExecContext(ctx, `DELETE FROM oauth_login_requests WHERE expires_at<=?`, time.Now().UTC()); err != nil {
+		return err
+	}
+	_, err := s.db.ExecContext(ctx, `INSERT INTO oauth_login_requests (state_hash, code_verifier, remember, return_to, expires_at) VALUES (?, ?, ?, ?, ?)`,
+		hash, login.CodeVerifier, login.Remember, login.ReturnTo, login.ExpiresAt.UTC())
+	return err
+}
+
+// 行锁保证并发回调中只有一个请求能消费 state，多实例也不依赖进程内存。
+func (s *MySQLStore) ConsumeOAuthLogin(ctx context.Context, hash string, now time.Time) (*OAuthLogin, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+	login := &OAuthLogin{}
+	err = tx.QueryRowContext(ctx, `SELECT code_verifier, remember, return_to, expires_at
+		FROM oauth_login_requests WHERE state_hash=? AND expires_at>? FOR UPDATE`, hash, now.UTC()).
+		Scan(&login.CodeVerifier, &login.Remember, &login.ReturnTo, &login.ExpiresAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, ErrOAuthState
+	}
+	if err != nil {
+		return nil, err
+	}
+	if _, err = tx.ExecContext(ctx, `DELETE FROM oauth_login_requests WHERE state_hash=?`, hash); err != nil {
+		return nil, err
+	}
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+	return login, nil
 }

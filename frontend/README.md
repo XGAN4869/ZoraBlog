@@ -20,7 +20,7 @@ npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
 ## 页面
 
 - `/`：网格首屏、文章分类、手记、项目索引与个人介绍。
-- `/login`：邮箱与密码校验、密码显示、加载和预览成功状态。
+- `/login`、`/register`：兼容旧地址，跳转到首页；本站没有独立登录页面。
 - `/articles/:slug`：导航栏下方的左侧全高分类目录、中间正文、右侧大纲、代码复制和相关阅读。导航栏始终位于窗口顶部，侧栏右上角可折叠。
 - 其他路径：404 页面。
 
@@ -30,7 +30,11 @@ npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
 
 ## 修改入口
 
-- `src/App.tsx`：页面与交互。
+- `src/App.tsx`：全局 Provider 与路由，保持现有 URL。
+- `src/pages/`：首页、文章详情和 404 页面；页面专用逻辑保留在页面内。
+- `src/layouts/Site.tsx`：共享页头、页脚、搜索弹窗、搜索快捷键、页面标题与滚动处理。
+- `src/components/ArticleCard.tsx`：首页和相关阅读共用的文章卡片，以及详情页共用的封面。
+- `src/components/IconAction.tsx`：带提示的图标按钮，用于主题切换和代码复制。
 - `src/App.css`：1700px 版心、布局与响应式规则。
 - `src/index.css`：明暗主题的语义化颜色变量。
 - `src/components/ShapeGrid.tsx`：Canvas 网格、拖尾、高分屏绘制和动画暂停。
@@ -49,9 +53,9 @@ npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
 
 ## 登录与后端
 
-当前登录仅校验输入并展示预览结果，不发送请求、不验证账户、不生成 token，也不保存邮箱或密码。“保持登录”在接口接入后生效。
+页头和移动菜单中的“使用 GitHub 登录”直接将浏览器带到 `/api/auth/github`，携带当前本站页面作为返回地址。后端完成 GitHub 授权后回到该页面；取消或失败通过页面上的 toast 提示，并清除地址中的 auth_error 参数。默认本站会话有效期 24 小时，界面不再提供“保持登录”表单。`AuthProvider` 通过 `/api/session` 恢复账户状态，通过 `/api/logout` 退出。浏览器凭证为后端设置的 HttpOnly Cookie，不把 GitHub token 或本站 Session ID 存入 localStorage/sessionStorage。
 
-保留原有 Vite `/api` 代理配置，未来可接入 `http://localhost:8080` 的 Go 服务。后端代码没有被本次前端工作修改。
+Vite `/api` 代理连接 `http://localhost:8080` 的 Go 服务。首次接入需要在 GitHub 创建 OAuth App 并填写后端环境变量，配置方式见 [backend/AUTH.md](../backend/AUTH.md)。若前端使用 5174，GitHub 回调和后端 PUBLIC_ORIGIN 也必须使用 5174。
 
 ## 验证
 
@@ -68,4 +72,4 @@ npm test
 npm run test:visual
 ```
 
-截图保存在忽略提交的 `test-results/visual/`，检查包含首页、登录页、文章页的横向溢出、首屏取景和浏览器控制台错误。
+截图保存在忽略提交的 `test-results/visual/`，检查包含首页和文章页的横向溢出、首屏取景和浏览器控制台错误。GitHub 入口的桌面和移动布局由 tests/auth.spec.ts 验证。

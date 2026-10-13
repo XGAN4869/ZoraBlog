@@ -1,6 +1,3 @@
-.auth-form-error { margin: 24px 0 0; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--destructive) 35%, var(--border)); border-radius: var(--control-radius); background: color-mix(in srgb, var(--destructive) 6%, var(--background)); color: var(--destructive); font-size: 13px; line-height: 1.7; }
-.auth-switch { text-align: center; margin-top: 22px; color: var(--muted-foreground); font-size: 13px; }
-.auth-switch a { color: var(--primary); margin-left: 8px; }
 .header-account { display: inline-flex; align-items: center; gap: 8px; height: var(--control-height); padding-inline: 12px; border: 1px solid var(--border); border-radius: var(--control-radius); background: var(--header-bg); color: var(--foreground); font-size: 13px; }
 .header-account > span { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .account-menu { min-width: 200px; }

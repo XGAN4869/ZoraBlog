@@ -42,6 +42,7 @@ func GenerateToken(userID uint, username string, expire time.Duration) (string, 
 		UserID:   userID,
 		Username: username,
 		// Go 的结构体嵌入了，无需写 jwt.RegisteredClaims 这个对象
+		// 如果少了任何一个要求的方法，这行就无法通过编译（没能实现接口）
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expire)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		Issuer:    jwtIssuer,
@@ -63,13 +64,14 @@ func ParseToken(tokenString string) (*Claims, error) {
 	if err != nil {
 		return nil, err
 	}
-	//TODO 创建 Token、填充用户数据、把指针保存到 token.Claims，这些由解析器完成
+	c := &Claims{} //创建 空的 结构体，后续 parse 接一下👆的claims 的值
+	//TODO 解析器: 创建 Token、填充用户数据、把指针 claims 保存到 token.Claims 接口后， 接口有动态类型 *claims 和 动态值 c
 	token, err := jwt.ParseWithClaims(
 		tokenString,
-		&Claims{},
+		c, //TODO 解析器给 c 赋值,然后顺着c 找到结构体，解析器解码 JWT 的第二段 payload，并用 JSON 反序列化填入结构体
 		func(t *jwt.Token) (any, error) {
 			return key, nil
-		},
+		}, // 返回 key 后，解析器用 key 验证签名
 		jwt.WithValidMethods([]string{"HS256"}), // 限定算法
 		jwt.WithExpirationRequired(),            // 必须有过期时间
 		jwt.WithIssuer(jwtIssuer),
@@ -81,6 +83,7 @@ func ParseToken(tokenString string) (*Claims, error) {
 	}
 
 	claims, ok := token.Claims.(*Claims)
+
 	if !ok || !token.Valid || claims.UserID == 0 || claims.Username == "" || claims.ID == "" {
 		return nil, errors.New("invalid token")
 	}

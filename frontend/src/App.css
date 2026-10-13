@@ -103,7 +103,7 @@
 }
 .header-login {
   color: #ffffff;
-  width: 96px;
+  width: auto;
   height: var(--control-height);
   font-size: var(--text-small);
 }
@@ -716,41 +716,6 @@
   font-size: 11px;
 }
 
-.login-page {
-  position: relative;
-  isolation: isolate;
-  min-height: calc(100svh - 204px);
-  overflow: hidden;
-  background: linear-gradient(
-    110deg,
-    var(--background),
-    var(--hero-tint),
-    var(--background)
-  );
-}
-.login-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 96px;
-  max-width: 1200px;
-  min-height: 696px;
-  padding: 64px 0;
-}
-.login-intro h1 {
-  font-size: 48px;
-  font-weight: 550;
-  line-height: 64px;
-  margin-top: 0;
-}
-.login-intro h1 span {
-  color: var(--primary);
-}
-.login-form-area {
-  max-width: 400px;
-  width: 100%;
-  justify-self: end;
-}
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -765,115 +730,6 @@
 }
 .back-link:hover {
   color: var(--primary);
-}
-.login-heading {
-  margin-top: 40px;
-  margin-bottom: 32px;
-}
-.login-heading h2 {
-  font-size: 40px;
-  line-height: 48px;
-  font-weight: 550;
-  margin: 0;
-}
-.form-field {
-  margin-bottom: 24px;
-}
-.form-field [data-slot="label"] {
-  margin-bottom: 8px;
-  font-size: var(--text-small);
-  line-height: var(--line-body);
-  font-weight: 400;
-}
-.form-field input {
-  height: var(--control-height-lg);
-  border-radius: var(--control-radius);
-  background: var(--header-bg);
-  font-size: var(--text-small);
-  padding-inline: 16px;
-}
-.form-field input::placeholder {
-  color: var(--muted-foreground);
-}
-.password-field {
-  position: relative;
-}
-.password-field input {
-  padding-right: 48px;
-}
-.password-field > button {
-  position: absolute;
-  right: 4px;
-  top: 4px;
-  color: var(--muted-foreground);
-}
-.field-error {
-  color: var(--destructive);
-  font-size: 11px;
-  margin-top: 7px;
-}
-.remember-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-top: 1px;
-  margin-bottom: 24px;
-}
-.remember-row label {
-  font-size: 11px;
-  font-weight: 400;
-}
-.remember-row > span {
-  margin-left: auto;
-  color: var(--muted-foreground);
-  font-size: 10px;
-}
-.submit-login {
-  height: var(--control-height-lg);
-  width: 100%;
-  border-radius: var(--control-radius);
-  justify-content: space-between;
-  font-size: var(--text-small);
-  padding-inline: 24px;
-}
-.login-preview-note {
-  border-top: 1px solid var(--border);
-  padding-top: 19px;
-  margin-top: 27px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-.login-preview-note .status-dot {
-  margin-top: 5px;
-  background: var(--primary);
-}
-.login-preview-note p {
-  font-size: 10px;
-  color: var(--muted-foreground);
-  line-height: 1.9;
-}
-.login-success {
-  padding-bottom: 36px;
-}
-.success-check {
-  color: #70ae96;
-  border: 1px solid var(--border);
-  display: inline-flex;
-  padding: 10px;
-}
-.login-success h3 {
-  margin-top: 21px;
-  font-size: 22px;
-}
-.login-success p {
-  color: var(--muted-foreground);
-  font-size: 13px;
-  line-height: 1.9;
-  margin: 16px 0 26px;
-}
-.login-success > button {
-  margin-left: 10px;
 }
 
 .article-page {
@@ -1139,12 +995,6 @@
   .article-card h3 {
     font-size: 20px;
   }
-  .login-layout {
-    gap: 55px;
-  }
-  .login-intro h1 {
-    font-size: 42px;
-  }
   .reading-layout {
     gap: 32px;
     grid-template-columns: minmax(0, 1fr);
@@ -1189,15 +1039,6 @@
   }
   .project-tags {
     display: none;
-  }
-  .login-layout {
-    gap: 40px;
-  }
-  .login-intro h1 {
-    font-size: 34px;
-  }
-  .login-form-area {
-    max-width: 360px;
   }
   .reading-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -1451,25 +1292,6 @@
   .search-results a span {
     font-size: 12px;
     line-height: 1.7;
-  }
-  .login-layout {
-    display: block;
-    min-height: 660px;
-    padding: 44px 6px;
-  }
-  .login-intro {
-    display: none;
-  }
-  .login-form-area {
-    margin: auto;
-    max-width: 390px;
-  }
-  .login-heading {
-    margin-top: 33px;
-  }
-  .login-heading h2 {
-    font-size: 32px;
-    line-height: 40px;
   }
   .article-page {
     padding-top: 34px;

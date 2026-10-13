@@ -24,10 +24,7 @@ func main() {
 		log.Fatalf("MySQL 连接或初始化失败：%v", err)
 	}
 	defer store.Close()
-	auth, err := service.NewAuth(store)
-	if err != nil {
-		log.Fatal(err)
-	}
+	auth := service.NewAuth(store, cfg)
 	app, err := router.SetupRouter(cfg, auth)
 	if err != nil {
 		log.Fatal(err)

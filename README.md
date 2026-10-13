@@ -1,13 +1,50 @@
 # Go React Blog
 
-当前仓库包含一个 React + TypeScript + Vite 前端，`backend` 目录暂时没有 Go 代码。
+本站使用 GitHub OAuth 登录，随机 Session ID 通过 HttpOnly Cookie 传输。接入步骤、数据库兼容及代码参考见 [backend/AUTH.md](backend/AUTH.md)。
+
+## 目录结构
+
+```text
+Go_React_Blog/
+├── frontend/                 # React 前端
+└── backend/
+    ├── main.go               # 加载配置、连接数据库、启动 HTTP 服务
+    ├── config/config.go      # 数据库、Cookie、GitHub OAuth 配置
+    ├── router/router.go      # 直接注册完整路由路径
+    ├── handlers/auth.go      # GitHub 跳转、回调、会话恢复、退出
+    ├── service/
+    │   ├── auth.go           # OAuth 请求与本站随机会话
+    │   └── github.go         # GitHub 授权码交换和用户 API
+    ├── repository/auth.go    # MySQL 用户、会话和一次性 OAuth 请求
+    ├── dto/                  # HTTP 响应和 GitHub API 数据结构
+    ├── middleware/
+    │   ├── auth.go           # 读取本站会话 Cookie
+    │   └── security.go       # 请求来源校验和登录限流
+    ├── response/response.go  # 统一 JSON 响应
+    ├── notes/                # 学习笔记
+    ├── AUTH.md               # 登录接入说明与代码参考
+    ├── go.mod
+    └── go.sum
+```
+
+## 目录作用
+
+| 目录 | 核心职责 | 举例 |
+| --- | --- | --- |
+| router | 注册 URL 与处理函数 | /api/auth/github |
+| handlers | HTTP 参数、Cookie 和响应 | 校验回调 state、重定向 |
+| service | 登录与会话业务 | 交换 GitHub 授权码、生成随机会话 |
+| repository | 数据库访问 | 查找会话、更新 GitHub 用户 |
+| middleware | 请求的公共处理 | 来源校验、限流 |
+| dto | 对外数据结构 | 会话响应、GitHub 用户资料 |
+| config | 加载运行配置 | MySQL 和 GitHub OAuth 参数 |
 
 ## 不使用 Docker：本地开发
 
 前端：
 
 ```powershell
-cd frontend/GanBlog
+cd frontend
 npm install
 npm run dev
 ```

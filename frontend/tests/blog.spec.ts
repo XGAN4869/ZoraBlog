@@ -68,54 +68,8 @@ test("theme persists and mobile layout stays in viewport", async ({ page }) => {
     ),
   ).toBe(true);
   await page.getByRole("button", { name: "打开导航菜单" }).click();
-  await page.getByRole("menuitem", { name: "登录" }).click();
-  await expect(page).toHaveURL("/login");
-});
-
-test("login validates required fields and never persists credentials", async ({
-  page,
-}) => {
-  await page.goto("/login");
-  await page.getByRole("button", { name: "登录", exact: true }).click();
-  await expect(page.getByText("请输入用户名或邮箱")).toBeVisible();
-  await page.getByLabel("用户名或邮箱").fill("zora@example.com");
-  await page.getByLabel("密码", { exact: true }).fill("demo-password");
-  await page.getByRole("button", { name: "显示密码" }).click();
-  await expect(page.getByLabel("密码", { exact: true })).toHaveAttribute(
-    "type",
-    "text",
-  );
-  expect(
-    await page.evaluate(() =>
-      JSON.stringify({ ...localStorage, ...sessionStorage }),
-    ),
-  ).not.toContain("demo-password");
-});
-
-test("login grid animates, responds to pointer, and respects reduced motion", async ({
-  page,
-}) => {
-  await page.goto("/login");
-  await page.waitForLoadState("networkidle");
-  const canvas = page.locator("canvas").first();
-  const snapshot = () =>
-    canvas.evaluate((element: HTMLCanvasElement) => {
-      const pixels = element
-        .getContext("2d")!
-        .getImageData(0, 0, 170, 170).data;
-      let hash = 0;
-      for (let index = 0; index < pixels.length; index++)
-        hash = (hash * 31 + pixels[index]) | 0;
-      return hash;
-    });
-  const initial = await snapshot();
-  await expect.poll(snapshot).not.toBe(initial);
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.mouse.move(100, 180);
-  await page.waitForTimeout(100);
-  const still = await snapshot();
-  await page.waitForTimeout(250);
-  expect(await snapshot()).toBe(still);
+  await expect(page.getByRole("menuitem", { name: "使用 GitHub 登录" })).toHaveAttribute("href", /^\/api\/auth\/github\?/);
+  await page.keyboard.press("Escape");
 });
 
 test("hover categories open articles with directory and outline", async ({

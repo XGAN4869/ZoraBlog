@@ -2,96 +2,53 @@ package service
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
 	"errors"
-	"net/mail"
-	"regexp"
+	"net/url"
 	"strings"
 	"time"
-	"unicode/utf8"
 
-	"xg/middlewares"
+	"xg/config"
 	"xg/repository"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
-var ErrInvalidCredentials = errors.New("用户名或密码错误")
-var ErrInvalidRegistration = errors.New("请检查用户名、邮箱和密码格式")
-var ErrInvalidSession = middlewares.ErrInvalidSession
-var usernamePattern = regexp.MustCompile(`^[a-zA-Z0-9_]{3,20}$`)
+var ErrInvalidSession = errors.New("登录状态已失效，请重新登录")
+var ErrOAuthUnavailable = errors.New("GitHub 登录尚未配置")
+var ErrOAuthState = repository.ErrOAuthState
+
+const OAuthLifetime = 10 * time.Minute
 
 type Auth struct {
-	store     repository.AuthStore
-	dummyHash []byte
+	store  repository.AuthStore
+	github *GitHub
 }
 
 type Session struct {
 	User      *repository.User `json:"user"`
-	ExpiresIn int              `json:"expiresIn"`
 	Token     string           `json:"-"`
 	ExpiresAt time.Time        `json:"-"`
+	Remember  bool             `json:"-"`
 }
 
-func NewAuth(store repository.AuthStore) (*Auth, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte("a-dummy-password-for-timing"), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-	return &Auth{store: store, dummyHash: hash}, nil
+type OAuthRedirect struct {
+	URL   string
+	State string
 }
 
-func (a *Auth) Register(ctx context.Context, username, email, password string, remember bool) (*Session, error) {
-	username, email = strings.TrimSpace(username), strings.ToLower(strings.TrimSpace(email))
-	address, err := mail.ParseAddress(email)
-	if !usernamePattern.MatchString(username) || err != nil || address.Address != email || len(email) > 254 || utf8.RuneCountInString(password) < 8 || len(password) > 72 {
-		return nil, ErrInvalidRegistration
-	}
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
-	}
-	user, err := a.store.CreateUser(ctx, username, email, hash)
-	if err != nil {
-		return nil, err
-	}
-	return a.newSession(ctx, user, remember)
+func NewAuth(store repository.AuthStore, cfg config.Config) *Auth {
+	return &Auth{store: store, github: NewGitHub(cfg)}
 }
 
-func (a *Auth) Login(ctx context.Context, identifier, password string, remember bool) (*Session, error) {
-	identifier = strings.ToLower(strings.TrimSpace(identifier))
-	if identifier == "" || len(identifier) > 254 || len(password) == 0 || len(password) > 72 {
-		return nil, ErrInvalidCredentials
+// RandomToken 生成 256 位随机凭证，内容不包含用户信息。
+func RandomToken() (string, error) {
+	value := make([]byte, 32)
+	if _, err := rand.Read(value); err != nil {
+		return "", err
 	}
-	user, err := a.store.FindUser(ctx, identifier)
-	if err != nil {
-		if errors.Is(err, repository.ErrUserNotFound) {
-			_ = bcrypt.CompareHashAndPassword(a.dummyHash, []byte(password))
-			return nil, ErrInvalidCredentials
-		}
-		return nil, err
-	}
-	if bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(password)) != nil {
-		return nil, ErrInvalidCredentials
-	}
-	return a.newSession(ctx, user, remember)
-}
-
-func (a *Auth) newSession(ctx context.Context, user *repository.User, remember bool) (*Session, error) {
-	ttl := 24 * time.Hour
-	if remember {
-		ttl = 30 * 24 * time.Hour
-	}
-	token, err := middlewares.GenerateToken(user.ID, user.Username, ttl)
-	if err != nil {
-		return nil, err
-	}
-	expires := time.Now().UTC().Add(ttl)
-	if err = a.store.CreateSession(ctx, TokenHash(token), user.ID, expires); err != nil {
-		return nil, err
-	}
-	return &Session{User: user, ExpiresIn: int(ttl / time.Second), Token: token, ExpiresAt: expires}, nil
+	return base64.RawURLEncoding.EncodeToString(value), nil
 }
 
 func TokenHash(token string) string {
@@ -99,26 +56,97 @@ func TokenHash(token string) string {
 	return hex.EncodeToString(hash[:])
 }
 
-func (a *Auth) ValidateSession(ctx context.Context, token string, id uint) error {
-	valid, err := a.store.SessionValid(ctx, TokenHash(token), id, time.Now().UTC())
+func validToken(token string) bool {
+	decoded, err := base64.RawURLEncoding.Strict().DecodeString(token)
+	return err == nil && len(decoded) == 32 && len(token) == 43
+}
+
+// SafeReturnTo 仅允许本站页面，避免登录回调成为开放重定向。
+func SafeReturnTo(value string) string {
+	if len(value) > 2048 || !strings.HasPrefix(value, "/") || strings.ContainsAny(value, "\\\r\n") {
+		return "/blog"
+	}
+	target, err := url.Parse(value)
+	if err != nil || target.IsAbs() || target.Host != "" || target.User != nil || !strings.HasPrefix(target.Path, "/") ||
+		strings.HasPrefix(target.Path, "//") || strings.ContainsAny(target.Path, "\\\r\n") ||
+		target.Path == "/login" || target.Path == "/register" || target.Path == "/api" || strings.HasPrefix(target.Path, "/api/") {
+		return "/blog"
+	}
+	return target.String()
+}
+
+func (a *Auth) BeginOAuth(ctx context.Context, remember bool, returnTo string) (*OAuthRedirect, error) {
+	if !a.github.Configured() {
+		return nil, ErrOAuthUnavailable
+	}
+	state, err := RandomToken()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if !valid {
-		return ErrInvalidSession
+	verifier, err := RandomToken()
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	login := repository.OAuthLogin{CodeVerifier: verifier, Remember: remember, ReturnTo: SafeReturnTo(returnTo), ExpiresAt: time.Now().UTC().Add(OAuthLifetime)}
+	if err = a.store.CreateOAuthLogin(ctx, TokenHash(state), login); err != nil {
+		return nil, err
+	}
+	return &OAuthRedirect{State: state, URL: a.github.AuthorizeURL(state, verifier)}, nil
+}
+
+func (a *Auth) FinishOAuth(ctx context.Context, state, code string) (*Session, string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+	if !a.github.Configured() {
+		return nil, "", ErrOAuthUnavailable
+	}
+	if !validToken(state) || code == "" || len(code) > 2048 {
+		return nil, "", ErrOAuthState
+	}
+	login, err := a.store.ConsumeOAuthLogin(ctx, TokenHash(state), time.Now().UTC())
+	if err != nil {
+		return nil, "", err
+	}
+	returnTo := SafeReturnTo(login.ReturnTo)
+	profile, err := a.github.Exchange(ctx, code, login.CodeVerifier)
+	if err != nil {
+		return nil, returnTo, err
+	}
+	user, err := a.store.UpsertGitHubUser(ctx, *profile)
+	if err != nil {
+		return nil, returnTo, err
+	}
+	token, err := RandomToken()
+	if err != nil {
+		return nil, returnTo, err
+	}
+	ttl := 24 * time.Hour
+	if login.Remember {
+		ttl = 30 * 24 * time.Hour
+	}
+	expires := time.Now().UTC().Add(ttl)
+	if err = a.store.CreateSession(ctx, TokenHash(token), user.ID, expires); err != nil {
+		return nil, returnTo, err
+	}
+	return &Session{User: user, Token: token, ExpiresAt: expires, Remember: login.Remember}, returnTo, nil
+}
+
+func (a *Auth) CancelOAuth(ctx context.Context, state string) (string, error) {
+	if !validToken(state) {
+		return "", ErrOAuthState
+	}
+	login, err := a.store.ConsumeOAuthLogin(ctx, TokenHash(state), time.Now().UTC())
+	if err != nil {
+		return "", err
+	}
+	return SafeReturnTo(login.ReturnTo), nil
 }
 
 func (a *Auth) CurrentUser(ctx context.Context, token string) (*repository.User, error) {
-	claims, err := middlewares.ParseToken(token)
-	if err != nil {
+	if !validToken(token) {
 		return nil, ErrInvalidSession
 	}
-	if err = a.ValidateSession(ctx, token, claims.UserID); err != nil {
-		return nil, err
-	}
-	user, err := a.store.UserByID(ctx, claims.UserID)
+	user, err := a.store.SessionUser(ctx, TokenHash(token), time.Now().UTC())
 	if errors.Is(err, repository.ErrUserNotFound) {
 		return nil, ErrInvalidSession
 	}
@@ -126,7 +154,7 @@ func (a *Auth) CurrentUser(ctx context.Context, token string) (*repository.User,
 }
 
 func (a *Auth) Logout(ctx context.Context, token string) error {
-	if token == "" {
+	if !validToken(token) {
 		return nil
 	}
 	return a.store.DeleteSession(ctx, TokenHash(token))

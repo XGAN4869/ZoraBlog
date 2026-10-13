@@ -4,16 +4,6 @@ export class ApiError extends Error {
 }
 
 export type AuthUser = { id: number; username: string; email: string };
-export type LoginInput = { username: string; password: string; remember: boolean };
-export type RegisterInput = LoginInput & { email: string };
-
-function userResult(data: { user: AuthUser }) {
-  const user = data?.user;
-  if (!user || !Number.isSafeInteger(user.id) || user.id <= 0 || typeof user.username !== "string" || !user.username || typeof user.email !== "string") {
-    throw new ApiError("登录状态异常，请重新尝试。");
-  }
-  return { user };
-}
 
 async function request<T>(path: string, init: RequestInit = {}, signal?: AbortSignal): Promise<T> {
   const controller = new AbortController();
@@ -42,7 +32,9 @@ async function request<T>(path: string, init: RequestInit = {}, signal?: AbortSi
 
 export const authApi = {
   session: (signal?: AbortSignal) => request<{ user: AuthUser | null }>("/session", {}, signal),
-  login: (input: LoginInput) => request<{ user: AuthUser }>("/login", { method: "POST", body: JSON.stringify(input) }).then(userResult),
-  register: (input: RegisterInput) => request<{ user: AuthUser }>("/register", { method: "POST", body: JSON.stringify(input) }).then(userResult),
+  githubLoginURL: (redirect: string) => {
+    const query = new URLSearchParams({ redirect });
+    return `/api/auth/github?${query}`;
+  },
   logout: () => request<null>("/logout", { method: "POST" }),
 };

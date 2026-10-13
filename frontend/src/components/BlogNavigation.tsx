@@ -38,23 +38,26 @@ export function BlogNavigation() {
               <div
                 className={`category-menu ${module.categories.length > 1 ? "category-menu-wide" : ""}`}
               >
-                {module.categories.map((category) => (
-                  <section key={category}>
-                    <div className="category-menu-heading">
-                      <span>{category}</span>
-                      <small>{categoryArticles(category).length} 篇</small>
-                    </div>
-                    {categoryArticles(category).map((article) => (
-                      <NavigationMenuLink
-                        key={article.slug}
-                        render={<Link to={`/articles/${article.slug}`} />}
-                        onClick={close}
-                      >
-                        {article.title}
-                      </NavigationMenuLink>
-                    ))}
-                  </section>
-                ))}
+                {module.categories.map((category) => {
+                  const items = categoryArticles(category);
+                  return (
+                    <section key={category}>
+                      <div className="category-menu-heading">
+                        <span>{category}</span>
+                        <small>{items.length} 篇</small>
+                      </div>
+                      {items.map((article) => (
+                        <NavigationMenuLink
+                          key={article.slug}
+                          render={<Link to={`/articles/${article.slug}`} />}
+                          onClick={close}
+                        >
+                          {article.title}
+                        </NavigationMenuLink>
+                      ))}
+                    </section>
+                  );
+                })}
               </div>
             </NavigationMenuContent>
           </NavigationMenuItem>

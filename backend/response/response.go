@@ -2,20 +2,14 @@ package response
 
 import (
 	"net/http"
+	"xg/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Response 统一返回结构
-type Response struct {
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
-}
-
 // OK 成功
 func OK(c *gin.Context, data interface{}) {
-	c.JSON(http.StatusOK, Response{
+	c.JSON(http.StatusOK, dto.Response{
 		Code:    0,
 		Message: "success",
 		Data:    data,
@@ -24,7 +18,7 @@ func OK(c *gin.Context, data interface{}) {
 
 // Fail 失败
 func Fail(c *gin.Context, httpStatus, code int, message string) {
-	c.JSON(httpStatus, Response{
+	c.JSON(httpStatus, dto.Response{
 		Code:    code,
 		Message: message,
 	})
@@ -32,7 +26,7 @@ func Fail(c *gin.Context, httpStatus, code int, message string) {
 
 // Error 错误响应
 func Error(c *gin.Context, httpStatus int, code int, message string) {
-	c.JSON(httpStatus, Response{
+	c.JSON(httpStatus, dto.Response{
 		Code:    code,
 		Message: message,
 		Data:    nil,

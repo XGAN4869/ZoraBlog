@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AuthContext } from "@/lib/auth";
-import { authApi, type AuthUser, type LoginInput, type RegisterInput } from "@/lib/api";
+import { authApi, type AuthUser } from "@/lib/api";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -18,18 +18,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => controller.abort();
   }, []);
 
-  async function login(input: LoginInput) {
-    revision.current++;
-    const data = await authApi.login(input);
-    setUser(data.user);
-    setReady(true);
-  }
-  async function register(input: RegisterInput) {
-    revision.current++;
-    const data = await authApi.register(input);
-    setUser(data.user);
-    setReady(true);
-  }
   async function logout() {
     revision.current++;
     await authApi.logout();
@@ -37,5 +25,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }
 
-  return <AuthContext.Provider value={{ user, ready, login, register, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, ready, logout }}>{children}</AuthContext.Provider>;
 }

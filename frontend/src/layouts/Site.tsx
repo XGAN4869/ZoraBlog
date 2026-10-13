@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight, BookOpen, LogOut, Menu, Search, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { authApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,6 +29,14 @@ import { BlogNavigation } from "@/components/BlogNavigation";
 import { AnimatedThemeToggler } from "@/registry/magicui/animated-theme-toggler";
 import { articleModules, categoryArticles } from "@/data/navigation";
 import { articles, filterArticles } from "@/data/articles";
+import "./Site.css";
+
+const oauthErrors: Record<string, string> = {
+  oauth_denied: "你取消了 GitHub 授权，可以重新尝试。",
+  invalid_state: "这次登录已过期，请重新使用 GitHub 登录。",
+  oauth_unavailable: "GitHub 登录暂未开放，请稍后再试。",
+  oauth_failed: "暂时无法完成 GitHub 登录，请稍后重试。",
+};
 
 const navigation = [
   { label: "首页", to: "/" },
@@ -54,6 +63,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const loginURL = authApi.githubLoginURL(location.pathname + location.search + location.hash);
   const [loggingOut, setLoggingOut] = useState(false);
   async function handleLogout() {
     if (loggingOut) return;
@@ -83,15 +93,15 @@ function Header({ onSearch }: { onSearch: () => void }) {
         {user ? <DropdownMenu>
           <DropdownMenuTrigger asChild><button type="button" className="header-account" aria-label={`账户：${user.username}`}><UserRound size={16} /><span>{user.username}</span></button></DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="account-menu">
-            <DropdownMenuLabel className="account-menu-label">{user.username}<small>{user.email}</small></DropdownMenuLabel>
+            <DropdownMenuLabel className="account-menu-label">{user.username}{user.email && <small>{user.email}</small>}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}><LogOut />{loggingOut ? "正在退出" : "退出登录"}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu> : <Button asChild className="header-login">
-          <Link to="/login">
-            登录
+          <a href={loginURL}>
+            使用 GitHub 登录
             <ArrowUpRight />
-          </Link>
+          </a>
         </Button>}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -134,7 +144,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
                 {item.label}
               </DropdownMenuItem>
             ))}
-            {user ? <><DropdownMenuSeparator /><DropdownMenuLabel>{user.username}</DropdownMenuLabel><DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}>退出登录</DropdownMenuItem></> : <><DropdownMenuItem onSelect={() => navigate("/login")}>登录</DropdownMenuItem><DropdownMenuItem onSelect={() => navigate("/register")}>注册账号</DropdownMenuItem></>}
+            {user ? <><DropdownMenuSeparator /><DropdownMenuLabel>{user.username}</DropdownMenuLabel><DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}>退出登录</DropdownMenuItem></> : <DropdownMenuItem asChild><a href={loginURL}>使用 GitHub 登录</a></DropdownMenuItem>}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -235,6 +245,16 @@ function Footer() {
 export function Site({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get("auth_error");
+    if (!error) return;
+    toast.error(oauthErrors[error] ?? oauthErrors.oauth_failed, { id: "github-login-error" });
+    params.delete("auth_error");
+    const search = params.toString();
+    navigate({ pathname: location.pathname, search: search ? `?${search}` : "", hash: location.hash }, { replace: true });
+  }, [location.pathname, location.search, location.hash, navigate]);
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
@@ -247,12 +267,8 @@ export function Site({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     document.title =
-      location.pathname === "/login"
-        ? "登录 · Hi Zora"
-        : location.pathname === "/register"
-          ? "注册 · Hi Zora"
-        : location.pathname === "/blog"
-          ? "博客 · Hi Zora"
+      location.pathname === "/blog"
+        ? "博客 · Hi Zora"
         : location.pathname.startsWith("/articles/")
           ? `${articles.find((article) => `/articles/${article.slug}` === location.pathname)?.title ?? "文章"} · Hi Zora`
           : "Hi Zora · 前端开发与创造";
