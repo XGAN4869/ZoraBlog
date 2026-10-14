@@ -43,7 +43,8 @@ func (g *GitHub) AuthorizeURL(state, verifier string) string {
 	challenge := sha256.Sum256([]byte(verifier))
 	query := url.Values{
 		"client_id": {g.clientID}, "redirect_uri": {g.callbackURL}, "scope": {"read:user"},
-		"state": {state}, "code_challenge": {base64.RawURLEncoding.EncodeToString(challenge[:])}, "code_challenge_method": {"S256"},
+		"prompt": {"select_account"},
+		"state":  {state}, "code_challenge": {base64.RawURLEncoding.EncodeToString(challenge[:])}, "code_challenge_method": {"S256"},
 	}
 	return "https://github.com/login/oauth/authorize?" + query.Encode()
 }

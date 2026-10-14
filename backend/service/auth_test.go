@@ -109,7 +109,8 @@ func TestOAuthLifecycle(t *testing.T) {
 			challenge := sha256.Sum256([]byte(login.CodeVerifier))
 			if u.Host != "github.com" || u.Query().Get("state") != redirect.State || u.Query().Get("code_challenge_method") != "S256" ||
 				u.Query().Get("code_challenge") != base64.RawURLEncoding.EncodeToString(challenge[:]) ||
-				u.Query().Get("redirect_uri") != testConfig().GitHubCallbackURL || u.Query().Get("scope") != "read:user" {
+				u.Query().Get("redirect_uri") != testConfig().GitHubCallbackURL || u.Query().Get("scope") != "read:user" ||
+				u.Query().Get("prompt") != "select_account" {
 				t.Fatal("invalid authorization request")
 			}
 			calls := 0

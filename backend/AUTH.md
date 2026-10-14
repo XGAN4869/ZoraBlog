@@ -38,7 +38,7 @@ GITHUB_CALLBACK_URL=http://localhost:5173/api/auth/github/callback
 原 POST /api/login、POST /api/register 已删除。前端不再提供独立登录页；/login 和 /register 兼容旧地址并跳转到首页。页头和移动菜单中的“使用 GitHub 登录”直接发起授权，完成后返回原页面。
 
 1. 发起登录时生成随机 state 和 PKCE verifier，将请求记录存入 MySQL；state 还放入 10 分钟有效的 HttpOnly Cookie，绑定发起登录的浏览器。
-2. 跳转到 GitHub，使用 S256 PKCE 和 read:user 权限，不申请仓库或私有邮箱权限。
+2. 跳转到 GitHub，使用 S256 PKCE 和 read:user 权限，不申请仓库或私有邮箱权限。授权 URL 带有 `prompt=select_account`，每次发起登录都显示 GitHub 账号选择，方便切换账号；已有 GitHub 登录状态仍可能免去密码输入。退出本站不会退出 GitHub，因此重新选择账号需退出本站后再次点击登录。
 3. 回调首先校验浏览器 Cookie 与 state，然后用数据库行锁一次性消费登录请求，阻止过期和重复回调。
 4. 后端交换授权码并调用 GitHub /user，以不可变的 GitHub 用户 ID 创建或更新本站账户。用户名和公开邮箱只作为显示信息；邮箱可能为空。不按邮箱或用户名自动关联旧账户。
 5. 生成 256 位随机 Session ID，将 SHA-256 哈希存入 MySQL，原始凭证写入 HttpOnly、SameSite=Lax Cookie。
