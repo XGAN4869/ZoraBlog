@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ArrowUpRight, BookOpen, LogOut, Menu, Search, UserRound, X } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/lib/auth";
+import { authEnabled, useAuth } from "@/lib/auth";
 import { authApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,7 +88,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
         </Button>
         <span className="action-divider" />
         <AnimatedThemeToggler />
-        {user ? <DropdownMenu>
+        {authEnabled && (user ? <DropdownMenu>
           <DropdownMenuTrigger asChild><button type="button" className="header-account" aria-label={`账户：${user.username}`}><UserRound size={16} /><span>{user.username}</span></button></DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="account-menu">
             <DropdownMenuLabel className="account-menu-label">{user.username}{user.email && <small>{user.email}</small>}</DropdownMenuLabel>
@@ -100,7 +100,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
             使用 GitHub 登录
             <ArrowUpRight />
           </a>
-        </Button>}
+        </Button>)}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -142,7 +142,7 @@ function Header({ onSearch }: { onSearch: () => void }) {
                 {item.label}
               </DropdownMenuItem>
             ))}
-            {user ? <><DropdownMenuSeparator /><DropdownMenuLabel>{user.username}</DropdownMenuLabel><DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}>退出登录</DropdownMenuItem></> : <DropdownMenuItem asChild><a href={loginURL}>使用 GitHub 登录</a></DropdownMenuItem>}
+            {authEnabled && (user ? <><DropdownMenuSeparator /><DropdownMenuLabel>{user.username}</DropdownMenuLabel><DropdownMenuItem disabled={loggingOut} onSelect={() => void handleLogout()}>退出登录</DropdownMenuItem></> : <DropdownMenuItem asChild><a href={loginURL}>使用 GitHub 登录</a></DropdownMenuItem>)}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
