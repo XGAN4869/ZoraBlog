@@ -34,9 +34,9 @@ export function ArticlePage() {
       <SidebarProvider className="article-reading-shell">
         <ArticleDirectory slug={article.slug} />
         <div className="reading-toolbar">
-          <Link to="/#room" className="back-link">
+          <Link to="/" className="back-link">
             <ArrowLeft />
-            回到房间
+            返回首页
           </Link>
           <div className="reading-tools">
             {article.markdownUrl && <Button asChild variant="ghost" size="sm"><a href={article.markdownUrl} download={`${article.slug}.md`} aria-label="下载 Markdown"><Download />Markdown</a></Button>}

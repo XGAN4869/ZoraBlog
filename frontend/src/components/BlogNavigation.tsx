@@ -62,24 +62,6 @@ export function BlogNavigation() {
             </NavigationMenuContent>
           </NavigationMenuItem>
         ))}
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            render={<Link to="/#projects" />}
-            className={navigationMenuTriggerStyle()}
-            onClick={close}
-          >
-            项目
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            render={<Link to="/#about" />}
-            className={navigationMenuTriggerStyle()}
-            onClick={close}
-          >
-            关于
-          </NavigationMenuLink>
-        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

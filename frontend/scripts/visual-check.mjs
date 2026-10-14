@@ -59,16 +59,10 @@ try {
         );
         const screens = await page.locator(".home-page > section").count();
         assert(
-          screens === 2 && Math.abs(hero.height - viewport.height) < 1,
-          `${name}: home must have exactly two full-height screens`,
+          screens === 1 && Math.abs(hero.height - viewport.height) < 1,
+          `${name}: home must have exactly one full-height screen`,
         );
         await page.screenshot({ path: `test-results/visual/${name}-hero.png` });
-        await page.locator(".home-page").evaluate((element) => element.scrollTo({ top: innerHeight, behavior: "instant" }));
-        await page.waitForTimeout(1000);
-        const room = await page.locator("#room").boundingBox();
-        assert(Math.abs(room.y) < 1 && Math.abs(room.height - viewport.height) < 1, `${name}: room framing`);
-        await page.screenshot({ path: `test-results/visual/${name}-room.png` });
-        await page.locator(".home-page").evaluate((element) => element.scrollTo({ top: 0, behavior: "instant" }));
       }
       if (routeName !== "home") {
         assert(await page.locator(".article-card").count() === 0, `${name}/${routeName}: removed article cards`);
@@ -95,7 +89,7 @@ try {
       });
     }
     await page.close();
-    console.log(`${name}: home, room, blog, article and Markdown notes verified`);
+    console.log(`${name}: home, blog, article and Markdown notes verified`);
   }
   assert.deepEqual(failures, [], "Browser console errors");
 } finally {

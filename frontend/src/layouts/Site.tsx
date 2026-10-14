@@ -42,8 +42,6 @@ const navigation = [
   { label: "首页", to: "/" },
   { label: "文章", to: "/blog" },
   { label: "手记", to: "/blog?category=手记" },
-  { label: "项目", to: "/#projects" },
-  { label: "关于", to: "/#about" },
 ];
 
 function Brand() {
