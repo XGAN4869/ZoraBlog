@@ -28,73 +28,6 @@ Repository（数据层）├─ 数据访问层（DAO）
 - 只读操作可使用 `RLock()` 和 `RUnlock()
 - defer = finally`
 
-# server 包 ：HTTP 层的装配中心。Handler 层
-
-```plaintext
-server.go (监听)
-  → middleware.go (链式处理)
-    → router.go (匹配路由)
-      → Handler (参数校验、组装返回体)
-        → Service (业务逻辑)
-          → Repository (读写数据)
-```
-
-## router.go
-
-### 定位
-
-- router.go —— 路由分发
-- 它创建了一个 HTTP 服务器引擎，在里面登记了"什么 URL 由什么函数处理"，然后把这个引擎交出去给 main.go 启动。
-
-### 一句话 Gin 框架 启动流程
-
-- 提供路由、中间件（中间逻辑）、请求处理
-- Gin（中间件）洋葱模型
-- router.go: 创建 gin 引擎，然后注册一个 GET 路由，路径是 /api/health，并挂上一个匿名处理函数。当有人访问这个地址时，执行该函数，用 c.JSON 返回 JSON 格式，状态码 200，响应体内容是 gin.H{...}。
-
-### router.GET/POST 内部逻辑
-
-- 在 Gin 的底层路由树（radix tree）上，为 GET 方法 + 指定路径 注册一个节点；
-- 把 handler 这个函数作为回调存起来（注册，不是调用）；
-- 将来匹配到请求时，由 Gin 的 ServeHTTP 去查找并调用这个 handler。
-
-### router 放 main.go 和 放 router.go 的区别
-
-```
-【写法一】main 一把梭
-
-  main()
-   ├── gin.Default()              创建引擎
-   ├── router.GET(...)            注册路由  ← 挂载
-   └── router.Run(":8080")        启动监听
-                                        │
-                                        ▼
-                                  请求来了 → 执行 handler
-
-
-【写法二】分层
-
-  main()
-   ├── server.NewRouter()  ──┐
-   │                         │  内部：
-   │                         │   ├── gin.Default()
-   │                         │   ├── router.GET(...)   ← 挂载（挪到了这里）
-   │                         │   └── return router
-   │                         │
-   ├── if err := router.Run(":8080"); err != nil {
-   │       log.Fatal(err)    处理启动错误
-   └── }
-                                        │
-                                        ▼
-                                  请求来了 → 执行 handler
-```
-
-## server.go
-
-### 定位
-
-- server.go —— HTTP 层的第一站（网络入口）
-
 ## middleware —— 逻辑拦截的第一站
 
 # config.go
@@ -142,7 +75,7 @@ server.go (监听)
 ```
 【源码层】
 main.go:   import "xg/internal/server"
-           router := server.NewRouter()
+           router := router.NewRouter()
                         │
                         │ ① 包名限定符
                         ▼
@@ -153,11 +86,11 @@ router.go: package server
                         ▼
 【编译层】
  编译server 包时，编译器会记录它导出的符号（symbol）表，比如 router.go 中的 server 表里有 NewRouter
-- 之后 main 包在编译时，遇到 server.NewRouter(包名+标识符)，编译器就去 server 包的符号表中查 NewRouter，找到后就 return 回来一个 &NewRouter 地址
+- 之后 main 包在编译时，遇到 router.NewRouter(包名+标识符)，编译器就去 server 包的符号表中查 NewRouter，找到后就 return 回来一个 &NewRouter 地址
                         │
                         ▼
 【链接层】
-  main.o 里对 NewRouter 的引用  ──链接──▶  server.o 里 NewRouter 的地址
+  main.o 里对 NewRouter 的引用  ──链接──▶  router.o 里 NewRouter 的地址
                         │
                         ▼
 【运行层】
@@ -169,6 +102,7 @@ router.go: package server
 依赖会下载到 GOPATH\pkg\mod 里, 所有项目共享的一份缓存，不同于 node_modules
 - go run .
 
-#
+## 序列化 和 反序列化
+- 核心：把“内存里的对象”变成“可以传输/存储的字符串（如 JSON）”叫序列化；反过来叫反序列化。
 
 #
