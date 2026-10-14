@@ -2,6 +2,10 @@
 
 当前上线范围为首页、Markdown 文章、目录、搜索和主题切换。内容随前端构建发布，不依赖 Go 或 MySQL。
 
+正式地址：<https://zora-blog-react.vercel.app>。Vercel 项目为 `xgan4869s-projects/zora-blog-react`，旧 Nuxt 项目保持原样。
+
+当前通过 CLI 从 `frontend` 目录发布，项目根目录为当前上传目录（`.`），尚未连接 Git 自动部署。下方 `frontend` Root Directory 是以后从完整 Git 仓库导入时的配置。
+
 ## 项目配置
 
 - Git 仓库：`XGAN4869/ZoraBlog`，生产分支 `main`。
@@ -17,7 +21,7 @@
 
 ```powershell
 npx vercel login
-npx vercel --prod
+npx vercel --prod --project zora-blog-react --scope xgan4869s-projects
 ```
 
 `.vercel` 是本地项目关联元数据，已忽略；`.vercelignore` 防止上传本地环境文件和测试产物。GitHub Secret 和数据库密码不应写进 `VITE_*` 变量，这些变量会进入浏览器代码。

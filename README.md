@@ -2,6 +2,8 @@
 
 本站使用 GitHub OAuth 登录，随机 Session ID 通过 HttpOnly Cookie 传输。接入步骤、数据库兼容及代码参考见 [backend/AUTH.md](backend/AUTH.md)。
 
+首页和文章已部署至 <https://zora-blog-react.vercel.app>。当前线上版本为静态博客，暂未启用登录；本地开发仍可连接 Go 和 MySQL。发布配置及后续认证接入见 [Vercel 部署说明](frontend/docs/vercel-deployment.md)。
+
 ## 目录结构
 
 ```text
