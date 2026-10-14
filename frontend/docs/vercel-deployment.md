@@ -4,7 +4,7 @@
 
 正式地址：<https://zora-blog-react.vercel.app>。Vercel 项目为 `xgan4869s-projects/zora-blog-react`，旧 Nuxt 项目保持原样。
 
-当前通过 CLI 从 `frontend` 目录发布，项目根目录为当前上传目录（`.`），尚未连接 Git 自动部署。下方 `frontend` Root Directory 是以后从完整 Git 仓库导入时的配置。
+当前项目已连接 GitHub 仓库的 `main` 分支，Root Directory 固定为 `frontend`。推送提交后自动构建并发布；Framework Preset 为 Vite，产物目录为 `dist`。首次 CLI 发布使用的是子目录上传，连接完整仓库后必须改为上述配置，否则仓库根目录没有首页文件，会出现 Vercel `404 NOT_FOUND`。
 
 ## 项目配置
 
@@ -17,11 +17,13 @@
 
 `frontend/vercel.json` 为 React Router 配置 SPA 回退，直接打开或刷新 `/articles/:slug` 也能读取正文。
 
-从 `frontend` 目录使用 Vercel CLI 部署：
+日常更新提交并推送到 `main` 即可触发自动部署。
+
+需要手动重新构建已有部署时，可使用 Vercel CLI：
 
 ```powershell
 npx vercel login
-npx vercel --prod --project zora-blog-react --scope xgan4869s-projects
+npx vercel redeploy <已有部署的URL或ID> --target production --scope xgan4869s-projects
 ```
 
 `.vercel` 是本地项目关联元数据，已忽略；`.vercelignore` 防止上传本地环境文件和测试产物。GitHub Secret 和数据库密码不应写进 `VITE_*` 变量，这些变量会进入浏览器代码。
