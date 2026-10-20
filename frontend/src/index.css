@@ -34,28 +34,28 @@
   font-family: var(--font-body);
   font-size: var(--text-body);
   line-height: var(--line-body);
-  --background: #f7f8fa;
-  --foreground: #17191f;
+  --background: #fcfdff;
+  --foreground: #20242a;
   --card: #ffffff;
-  --card-foreground: #17191f;
+  --card-foreground: #20242a;
   --popover: #ffffff;
-  --popover-foreground: #17191f;
-  --primary: #285fea;
+  --popover-foreground: #20242a;
+  --primary: #bf4b0b;
   --primary-foreground: #ffffff;
-  --secondary: #edf0f5;
-  --secondary-foreground: #292e38;
-  --muted: #edf0f5;
-  --muted-foreground: #646c7b;
-  --accent: #e9edf5;
-  --accent-foreground: #17191f;
+  --secondary: #f4f6f8;
+  --secondary-foreground: #303842;
+  --muted: #f4f6f8;
+  --muted-foreground: #626d7b;
+  --accent: #fff1e7;
+  --accent-foreground: #20242a;
   --destructive: #ce354d;
-  --border: #dce0e7;
-  --input: #cfd5df;
-  --ring: #5285f9;
+  --border: #e5e9ee;
+  --input: #d4dae2;
+  --ring: #bf4b0b;
   --radius: 0.5rem;
   --mono: "JetBrains Mono Variable", Consolas, monospace;
-  --header-bg: rgba(250, 251, 253, 0.9);
-  --hero-tint: #e7eefc;
+  --header-bg: rgba(252, 253, 255, 0.94);
+  --hero-tint: rgba(255, 166, 91, 0.10);
   color-scheme: light;
   color: var(--foreground);
   background: var(--background);
@@ -73,26 +73,26 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  --background: #0a0b0d;
-  --foreground: #f0f1f3;
-  --card: #101216;
-  --card-foreground: #f0f1f3;
-  --popover: #15171c;
-  --popover-foreground: #f0f1f3;
-  --primary: #3975f5;
-  --primary-foreground: #ffffff;
-  --secondary: #1b1e24;
-  --secondary-foreground: #e0e3e9;
-  --muted: #191c22;
-  --muted-foreground: #949ba9;
-  --accent: #20242c;
-  --accent-foreground: #f0f1f3;
+  --background: #101113;
+  --foreground: #eff0f2;
+  --card: #17191c;
+  --card-foreground: #eff0f2;
+  --popover: #1c1f23;
+  --popover-foreground: #eff0f2;
+  --primary: #eea06a;
+  --primary-foreground: #24180f;
+  --secondary: #23262b;
+  --secondary-foreground: #e4e7eb;
+  --muted: #202329;
+  --muted-foreground: #a0a9b6;
+  --accent: #34271e;
+  --accent-foreground: #eff0f2;
   --destructive: #f77b8b;
-  --border: #262a32;
-  --input: #333944;
-  --ring: #6b97f8;
-  --header-bg: rgba(15, 17, 21, 0.9);
-  --hero-tint: #121d35;
+  --border: #30343a;
+  --input: #414853;
+  --ring: #eea06a;
+  --header-bg: rgba(16, 17, 19, 0.94);
+  --hero-tint: rgba(210, 106, 36, 0.13);
   color-scheme: dark;
 }
 
@@ -154,10 +154,7 @@ a {
 button:disabled {
   cursor: default;
 }
-::selection {
-  background: #3975f5;
-  color: white;
-}
+::selection { background: var(--primary); color: var(--primary-foreground); }
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 4px;

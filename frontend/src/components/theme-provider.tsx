@@ -14,7 +14,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.toggle("dark", theme === "dark");
     document
       .querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", theme === "dark" ? "#0a0b0d" : "#f7f8fa");
+      ?.setAttribute("content", theme === "dark" ? "#101113" : "#fcfdff");
     try {
       localStorage.setItem("zora-theme", theme);
     } catch {

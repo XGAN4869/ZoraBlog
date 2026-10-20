@@ -21,6 +21,7 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/articles" element={<Blog />} />
                 <Route path="/login" element={<Navigate replace to="/" />} />
                 <Route path="/register" element={<Navigate replace to="/" />} />
                 <Route path="/articles/:slug" element={<ArticlePage />} />
