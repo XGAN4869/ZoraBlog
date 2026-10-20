@@ -18,3 +18,8 @@ coverage.out
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Local references and generated files
+/.npm-cache/
+/frontend/output/
+/gin-docs-zh-cn/
