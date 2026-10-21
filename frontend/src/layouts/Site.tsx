@@ -47,12 +47,7 @@ const navigation = [
 function Brand() {
   return (
     <Link className="brand" to="/" aria-label="Hi Zora 首页">
-      <span className="brand-mark">
-        z<span>.</span>
-      </span>
-      <span>
-        Hi Zora<span className="brand-dot">.</span>
-      </span>
+      <img className="brand-mark" src="/zora-icon.svg" alt="" width="40" height="40" />
     </Link>
   );
 }

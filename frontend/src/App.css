@@ -26,28 +26,34 @@
 .brand {
   justify-self: start;
   display: inline-flex;
-  gap: 12px;
   align-items: center;
-  font-size: 20px;
-  line-height: 24px;
-  font-weight: 650;
-  white-space: nowrap;
+  justify-content: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  flex-shrink: 0;
 }
 .brand-mark {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--foreground);
-  color: var(--background);
-  width: 32px;
-  height: 32px;
-  font:
-    800 27px/1 "Inter Variable",
-    sans-serif;
+  display: block;
+  flex-shrink: 0;
+  width: var(--control-height);
+  height: var(--control-height);
+  object-fit: contain;
+  filter: drop-shadow(-1px 1px 4px rgba(242, 161, 100, .12))
+    drop-shadow(1px -1px 4px rgba(142, 186, 255, .14));
+  animation: brand-glow-breathe 7s ease-in-out infinite;
 }
-.brand-mark span,
-.brand-dot {
-  color: var(--primary);
+@keyframes brand-glow-breathe {
+  0%, 100% {
+    filter: drop-shadow(-1px 1px 4px rgba(242, 161, 100, .12))
+      drop-shadow(1px -1px 4px rgba(142, 186, 255, .14));
+  }
+  50% {
+    filter: drop-shadow(-1px 1px 6px rgba(242, 161, 100, .20))
+      drop-shadow(1px -1px 6px rgba(142, 186, 255, .22));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark { animation: none; }
 }
 .desktop-nav {
   display: flex;
@@ -605,14 +611,9 @@
   height: 110px;
   color: var(--muted-foreground);
 }
-.site-footer .brand {
-  font-size: 15px;
-  color: var(--foreground);
-}
 .site-footer .brand-mark {
-  width: 25px;
-  height: 25px;
-  font-size: 22px;
+  width: 40px;
+  height: 40px;
 }
 .site-footer > span {
   font-size: var(--text-caption);
@@ -1095,15 +1096,6 @@
     margin-top: var(--nav-offset);
     top: var(--nav-offset);
     padding-inline: 16px;
-  }
-  .brand {
-    font-size: 16px;
-    gap: 8px;
-  }
-  .brand-mark {
-    width: 32px;
-    height: 32px;
-    font-size: 23px;
   }
   .desktop-nav,
   .header-login {

@@ -1,5 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <rect width="48" height="48" fill="#f0f1f3"/>
-  <path d="M10 12h25v6L19 31h16v6H10v-6l16-13H10z" fill="#0a0b0d"/>
-  <path d="M37 31h6v6h-6z" fill="#3975f5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="244 252 750 730" fill="none">
+  <title>Zora dinosaur logo</title>
+  <defs>
+    <linearGradient id="zora-gradient" gradientUnits="userSpaceOnUse" x1="870" y1="946" x2="360" y2="416" color-interpolation="sRGB">
+      <stop offset="0" stop-color="#f2a164"/>
+      <stop offset=".34" stop-color="#f3b1b8"/>
+      <stop offset=".66" stop-color="#c3b0f0"/>
+      <stop offset="1" stop-color="#8ebaff"/>
+    </linearGradient>
+    <filter id="zora-glow" x="180" y="180" width="900" height="900" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope=".35"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g stroke="url(#zora-gradient)" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" filter="url(#zora-glow)">
+    <path d="M 292 623 H 450 Q 459 623 454 632 L 278 936 Q 272 946 283 946 H 527 Q 535 946 535 938 V 424 Q 535 416 543 416 H 681 C 790 416 870 473 870 563 C 870 628 838 677 774 704 Q 765 708 769 719 L 849 936 Q 853 946 842 946 H 603"/>
+    <rect x="624" y="486" width="105" height="171" rx="50"/>
+    <path d="M 800 354 L 961 286 L 883 438 Z"/>
+  </g>
 </svg>
