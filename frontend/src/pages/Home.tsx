@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Code2, FileCode2 } from "lucide-react";
 import { useTheme } from "@/lib/theme";
 import { ShapeGrid } from "@/components/ShapeGrid";
@@ -10,8 +11,19 @@ import { categories, filterArticles } from "@/data/articles";
 import "@/components/HomeModules.css";
 import "@/components/HomeSections.css";
 
+const skills = [
+  { name: "Vue", level: "熟练", rank: "03", strength: 80 },
+  { name: "React", level: "入门", rank: "01", strength: 25 },
+  { name: "Go", level: "入门", rank: "01", strength: 25 },
+  { name: "TypeScript", level: "一般", rank: "02", strength: 50 },
+  { name: "Node.js", level: "入门", rank: "01", strength: 25 },
+] as const;
+
 export function Home() {
   const [category, setCategory] = useState("全部");
+  const reducedMotion = useReducedMotion();
+  const skillsRef = useRef<HTMLElement>(null);
+  const skillsInView = useInView(skillsRef, { once: true, amount: 0.3 });
   const { resolvedTheme } = useTheme();
   const visible = filterArticles("", category);
   return (
@@ -59,11 +71,34 @@ export function Home() {
               </Link>
             </div>
           </section>
-          <section className="about-section shell section" id="about">
-            <div className="about-label"><span className="about-monogram">Z<span>.</span></span></div>
-            <div className="about-copy"><span className="category-label">关于我</span><h2>保持好奇，<br />认真创造。</h2>
-              <p>我是 Zora，一名前端开发工程师。<br />喜欢清晰的代码，也喜欢有温度的设计。这里是我的知识记录，<br className="desktop-break" />也是持续学习、分享和创造的地方。</p>
-              <div className="about-interests"><span>前端开发</span><span>工程实践</span><span>交互设计</span><span>持续学习</span></div>
+          <section className="about-section shell section" id="about" ref={skillsRef}>
+            <div className="section-heading skill-section-heading">
+              <div><div className="section-kicker"><span>04</span> / TECH STACK</div><h2>技术栈强度<span className="blue-period">.</span></h2></div>
+              <span className="skill-count">05 项技术</span>
+            </div>
+            <div className="skill-chart" aria-label="技术栈熟练度">
+              <p className="skill-caption">持续学习，持续构建。</p>
+              <div className="skill-chart-head" aria-hidden="true">
+                <span>TECH / 技术</span><span>PROFICIENCY / 强度</span><span>LVL / 等级</span>
+              </div>
+              <ul className="skill-list">
+                {skills.map((skill, index) => (
+                  <li className="skill-row" key={skill.name}>
+                    <span className="skill-name">{skill.name}</span>
+                    <span className="skill-track" role="meter" aria-label={`${skill.name}：${skill.level}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={skill.strength}>
+                      <motion.span
+                        className="skill-fill"
+                        style={{ width: `${skill.strength}%`, transformOrigin: "left center" }}
+                        initial={{ scaleX: reducedMotion ? 1 : 0 }}
+                        animate={{ scaleX: reducedMotion || skillsInView ? 1 : 0 }}
+                        transition={{ duration: reducedMotion ? 0 : 0.65, delay: reducedMotion ? 0 : index * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                      />
+                    </span>
+                    <span className="skill-rating"><strong>{skill.rank}</strong><span>{skill.level}</span></span>
+                  </li>
+                ))}
+              </ul>
+              <div className="skill-card-foot">01 入门 / 02 一般 / 03 熟练</div>
             </div>
           </section>
         </div>

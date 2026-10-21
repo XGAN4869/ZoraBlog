@@ -29,7 +29,24 @@
   border-radius: 10px;
   overflow: hidden;
 }
-.cmd-window { grid-row: span 2; }
+.cmd-window {
+  grid-row: span 2;
+  border-color: transparent;
+  background:
+    linear-gradient(var(--card), var(--card)) padding-box,
+    linear-gradient(110deg, #e99b60 0%, #e6ad80 25%, #b9b9d2 63%, #90b5f5 100%) border-box;
+  background-size: 100% 100%, 125% 100%;
+  box-shadow: -3px 0 14px rgba(228, 143, 83, .09), 3px 0 14px rgba(132, 174, 250, .11);
+  animation: cmd-border-drift 10s ease-in-out infinite alternate, cmd-border-breathe 7s ease-in-out infinite;
+}
+@keyframes cmd-border-drift {
+  from { background-position: 0 0, 0% 50%; }
+  to { background-position: 0 0, 100% 50%; }
+}
+@keyframes cmd-border-breathe {
+  0%, 100% { box-shadow: -3px 0 14px rgba(228, 143, 83, .09), 3px 0 14px rgba(132, 174, 250, .11); }
+  50% { box-shadow: -3px 0 21px rgba(228, 143, 83, .16), 3px 0 23px rgba(132, 174, 250, .20); }
+}
 .cmd-titlebar {
   display: flex;
   align-items: center;
@@ -93,6 +110,7 @@
   .home-shortcut { padding: 18px 22px; min-height: 76px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .cmd-window { animation: none; }
   .cmd-cursor { animation: none; }
   .home-shortcut { transition: none; }
 }

@@ -112,19 +112,28 @@
 .home-sections .project-row:hover h3,
 .home-sections .project-row:hover > svg { color: var(--section-accent); }
 
-/* About is a compact profile module instead of an oversized closing hero. */
-.home-sections .about-section { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: start; gap: 20px; }
-.home-sections .about-label .section-kicker,
-.home-sections .about-end { display: none; }
-.home-sections .about-monogram { display: flex; justify-content: center; align-items: center; width: 56px; height: 56px; margin: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--secondary); font: 550 28px/1 var(--mono); }
-.home-sections .about-monogram span { color: var(--section-accent); }
-.home-sections .about-copy > .category-label { font-size: 14px; line-height: 24px; font-weight: 500; color: var(--foreground); }
-.home-sections .about-copy h2 { margin-top: 10px; font-size: 18px; line-height: 28px; font-weight: 500; }
-.home-sections .about-copy h2 br,
-.home-sections .about-copy .desktop-break { display: none; }
-.home-sections .about-copy p { margin-top: 10px; font-size: 13px; line-height: 24px; }
-.home-sections .about-interests { gap: 8px; margin-top: 16px; }
-.home-sections .about-interests span { padding: 3px 8px; border: 1px solid var(--border); border-radius: 5px; font-size: 11px; line-height: 20px; }
+/* The skill card shares the other home panels' surface, heading and accent. */
+.home-sections > .about-section { display: block; }
+.skill-count { color: var(--muted-foreground); font: 10px/20px var(--mono); white-space: nowrap; }
+.skill-caption { margin: 0 0 16px; color: var(--muted-foreground); font-size: 12px; line-height: 22px; }
+.skill-chart-head,
+.skill-row { display: grid; grid-template-columns: minmax(115px, 1.2fr) minmax(120px, 4fr) minmax(92px, .8fr); gap: 20px; align-items: center; }
+.skill-chart-head { padding: 0 0 10px; border-bottom: 1px solid var(--border); color: var(--muted-foreground); font: 10px/20px var(--mono); letter-spacing: .04em; }
+.skill-chart-head > :last-child { text-align: right; }
+.skill-list { display: grid; gap: 14px; margin: 16px 0 0; padding: 0; list-style: none; }
+.skill-row { min-height: 26px; transition: transform .24s cubic-bezier(.22, 1, .36, 1); }
+.skill-name { width: fit-content; max-width: 100%; padding: 2px 7px; border: 1px solid var(--border); border-radius: 4px; background: var(--secondary); color: var(--foreground); font: 11px/20px var(--mono); white-space: nowrap; transition: border-color .24s ease, background-color .24s ease; }
+.skill-track { display: block; height: 14px; overflow: hidden; border-radius: 3px; background-color: var(--secondary); background-image: radial-gradient(var(--border) .7px, transparent .9px); background-size: 3px 3px; }
+.skill-fill { display: block; height: 100%; border-radius: inherit; background: var(--primary); transition: filter .24s ease; }
+.skill-rating { display: flex; align-items: baseline; justify-content: flex-end; gap: 8px; white-space: nowrap; }
+.skill-rating strong { color: var(--primary); font: 600 14px/1 var(--mono); font-variant-numeric: tabular-nums; }
+.skill-rating span { color: var(--muted-foreground); font-size: 11px; }
+.skill-card-foot { margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted-foreground); font: 10px/1.5 var(--mono); }
+@media (hover: hover) {
+  .skill-row:hover { transform: translateX(3px); }
+  .skill-row:hover .skill-name { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); background-color: color-mix(in srgb, var(--primary) 7%, var(--secondary)); }
+  .skill-row:hover .skill-fill { filter: brightness(1.14); }
+}
 .home-sections a:focus-visible,
 .home-sections [role="tab"]:focus-visible { outline-color: var(--section-accent); }
 @media (max-width: 800px) {
@@ -153,7 +162,26 @@
   .home-sections .article-cover { width: 32px; height: 32px; flex-basis: 32px; }
   .home-sections .article-cover img,
   .home-sections .article-cover .cover-symbol { width: 20px; height: 20px; }
-  .home-sections .about-section { grid-template-columns: 40px minmax(0, 1fr); gap: 14px; }
-  .home-sections .about-monogram { width: 40px; height: 40px; font-size: 23px; }
-  .home-sections .about-copy h2 { font-size: 16px; }
+}
+@media (max-width: 600px) {
+  .skill-chart-head,
+  .skill-row { grid-template-columns: minmax(86px, 1fr) minmax(72px, 2fr) minmax(64px, .8fr); gap: 10px; }
+  .skill-chart-head { font-size: 9px; }
+  .skill-track { height: 12px; }
+  .skill-list { gap: 12px; }
+  .skill-rating { gap: 5px; }
+  .skill-rating strong { font-size: 13px; }
+  .skill-rating span { font-size: 10px; }
+}
+@media (max-width: 380px) {
+  .skill-chart-head { display: none; }
+  .skill-row { grid-template-columns: 1fr auto; gap: 8px 12px; }
+  .skill-track { grid-column: 1 / -1; grid-row: 2; }
+  .skill-rating { grid-column: 2; grid-row: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skill-row,
+  .skill-name,
+  .skill-fill { transition: none; }
+  .skill-row:hover { transform: none; }
 }
