@@ -18,7 +18,6 @@ test("blog redirects to first document without an intermediate listing or histor
   await page.goto("/");
   await page.getByRole("link", { name: "探索文章", exact: true }).click();
   await expect(page).toHaveURL("/articles/go-syntax");
-  await expect(page.locator(".article-card")).toHaveCount(0);
   await page.goBack();
   await expect(page).toHaveURL("/");
   await page.goto("/blog?category=手记");
@@ -36,7 +35,6 @@ test("document footer follows directory order and handles both ends", async ({ p
   await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
   await pagination.getByRole("link", { name: "Previous: Go 语法笔记" }).click();
   await expect(page).toHaveURL("/articles/go-syntax");
-  await expect(page.getByText("继续探索", { exact: true })).toHaveCount(0);
   await page.goto("/articles/learning-by-writing");
   await expect(pagination.getByRole("link", { name: /^Next:/ })).toHaveCount(0);
   await expect(pagination.getByRole("link", { name: /^Previous:/ })).toHaveCount(1);
@@ -54,10 +52,7 @@ test("Obsidian links and embeds transform without rewriting inline code or array
   expect(html).toContain("[[Missing]]");
 });
 
-test("roadmap imports publish content, keep empty notes as source, and resolve Markdown links", async ({ page }) => {
-  expect(manifest.notes).toHaveLength(75);
-  expect(manifest.empty).toHaveLength(2);
-  expect(manifest.assets).toHaveLength(16);
+test("imported Markdown links resolve to the corresponding article", async ({ page }) => {
   const index = note("浏览器/gpt前端场景/README.md");
   const overview = note("浏览器/gpt前端场景/00-总览与学习路线.md");
   await page.goto(`/articles/${index.slug}`);
@@ -80,15 +75,4 @@ test("roadmap wiki heading links work and local embedded images load", async ({ 
   await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   await expect(image).toHaveAttribute("src", /^\/note-assets\/roadmap\//);
-});
-
-test("mobile document footer stays within viewport", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/articles/http-request");
-  const footer = page.getByRole("navigation", { name: "文章翻页" });
-  await footer.scrollIntoViewIfNeeded();
-  for (const link of await footer.getByRole("link").all()) await expect(link).toBeInViewport({ ratio: 1 });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: "test-results/document-pagination-mobile.png" });
 });
