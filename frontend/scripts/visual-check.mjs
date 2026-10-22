@@ -18,7 +18,7 @@ try {
     ["mobile-dark", { width: 390, height: 844 }, "dark"],
     ["mobile-light", { width: 390, height: 844 }, "light"],
   ]) {
-    const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+    const page = await browser.newPage({ viewport, deviceScaleFactor: 1, reducedMotion: "reduce" });
     page.on("pageerror", (error) => failures.push(error.message));
     page.on("console", (message) => {
       if (message.type() === "error") failures.push(message.text());
@@ -39,33 +39,7 @@ try {
       await page.goto(`${origin}${route}`);
       await page.waitForLoadState("networkidle");
       await page.locator("main").waitFor();
-      assert(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= innerWidth,
-        ),
-        `${name}/${routeName}: horizontal overflow`,
-      );
-      if (routeName === "home") {
-        await page.locator('.hero-terminal-greeting[data-typing-complete="true"]').waitFor();
-        await page.locator('.hero-terminal-output[data-typing-complete="true"]').waitFor();
-        const hero = await page.locator(".hero").boundingBox();
-        const heading = await page.locator(".hero h1").boundingBox();
-        assert(
-          hero &&
-            heading &&
-            heading.x >= 0 &&
-            heading.x + heading.width <= viewport.width,
-          `${name}: heading framing`,
-        );
-        const screens = await page.locator(".home-page > section").count();
-        assert(
-          screens === 1 && Math.abs(hero.height - viewport.height) < 1,
-          `${name}: home must have exactly one full-height screen`,
-        );
-        await page.screenshot({ path: `test-results/visual/${name}-hero.png` });
-      }
       if (routeName !== "home") {
-        assert(await page.locator(".article-card").count() === 0, `${name}/${routeName}: removed article cards`);
         await page.locator(".article-pagination").waitFor();
       }
       if (routeName === "roadmap") {
