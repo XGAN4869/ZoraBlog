@@ -5,7 +5,7 @@ import { ArrowRight, ArrowUpRight, Code2, NotebookPen, Terminal } from "lucide-r
 import { articles } from "@/data/articles";
 import { Button } from "@/components/ui/button";
 
-const greeting = "Hi, Zora.";
+const greeting = "Hi, I am Zora.";
 const reflections = [
   { zh: "想走得更远，也想学会安心停留。", en: "I want to go further, and learn to feel at ease when I pause." },
   { zh: "保持好奇，给自己慢慢生长的时间。", en: "Stay curious, and give myself time to grow." },
