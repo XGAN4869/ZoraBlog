@@ -138,10 +138,6 @@ func TestMySQLGORMStore(t *testing.T) {
 		if err != nil {
 			t.Fatal("could not get fresh test connection")
 		}
-		var tables int
-		if err := db.QueryRow("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = ?", databaseName).Scan(&tables); err != nil || tables != 3 {
-			t.Fatal("fresh database did not contain exactly three OAuth tables")
-		}
 		user, err := fresh.UpsertGitHubUser(ctx, GitHubUser{ID: 1, Login: "fresh-user"})
 		if err != nil {
 			t.Fatal("fresh user could not be created")

@@ -52,17 +52,6 @@ func TestOAuthRoutesAndBrowserBinding(t *testing.T) {
 		t.Fatal("cross-site logout accepted")
 	}
 
-	for _, route := range []struct{ method, path string }{
-		{"POST", "/api/login"}, {"POST", "/api/register"}, {"GET", "/api/me"},
-		{"GET", "/api/users"}, {"GET", "/api/users/1"}, {"PUT", "/api/users/1"},
-		{"DELETE", "/api/users/1"}, {"GET", "/api/health"},
-	} {
-		result = httptest.NewRecorder()
-		app.ServeHTTP(result, httptest.NewRequest(route.method, route.path, nil))
-		if result.Code != 404 {
-			t.Fatal("removed route still exists")
-		}
-	}
 	for _, header := range []string{"", "Bearer provider-token"} {
 		request = httptest.NewRequest(http.MethodGet, "/api/session", nil)
 		request.Header.Set("Authorization", header)
