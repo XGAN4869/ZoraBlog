@@ -1,3 +1,9 @@
+:root:has(.home-layout) {
+  --font-body: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Microsoft YaHei", sans-serif;
+  --font-heading: var(--font-body);
+  --mono: var(--font-body);
+}
+
 .home-page { position: relative; isolation: isolate; }
 .home-page > .shape-grid { position: fixed; inset: 0; pointer-events: none; }
 .home-background-shade { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 65% 16%, var(--hero-tint), transparent 68%); }
@@ -76,6 +82,7 @@
 .home-sections .article-cover .cover-symbol { width: 26px; height: 26px; transform: none; color: var(--muted-foreground); }
 .home-sections .article-cover img { filter: grayscale(1); }
 .home-sections .ts-symbol { width: auto; height: auto; padding: 0; border: 0; background: none; color: var(--muted-foreground); font-size: 22px; }
+.home-sections :is(.ts-symbol, .vue-symbol) { font-family: var(--mono); }
 .home-sections .vue-symbol,
 .home-sections .css-symbol { font-size: 27px; color: var(--muted-foreground); }
 .home-sections .article-card-body { flex: 1; min-width: 0; padding: 0; }
